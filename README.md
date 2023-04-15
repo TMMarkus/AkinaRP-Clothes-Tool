@@ -6,9 +6,9 @@ I do this as an alternative for people who are looking for a decent and free too
 
 ### Screenshots
 
-![screen-1](https://image.prntscr.com/image/MKOD2aGBQ5GRtIytkFx2cQ.png)
+![screen1](https://github.com/TMMarkus/Akina-RP-Tool/blob/main/screenshots/screen1.jpg?raw=true)
 
-![screen-2](https://image.prntscr.com/image/W9Mx-YdXTFijeJB6Mih0sA.png)
+![screen2](https://github.com/TMMarkus/Akina-RP-Tool/blob/main/screenshots/screen2.jpg?raw=true)
 
 ### Additional Notes
 
