@@ -10,6 +10,7 @@
     <StartupObject />
     <ApplicationIcon>icon_alpha.ico</ApplicationIcon>
     <IsPublishable>False</IsPublishable>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RageLib">
@@ -28,7 +29,9 @@
     <Analyzer Include="..\packages\Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers.0.4.410601\analyzers\dotnet\cs\Microsoft.DotNet.UpgradeAssistant.Extensions.Default.CodeFixes.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icon_alpha.ico" />
+    <Content Include="icon_alpha.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -44,6 +47,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Update="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
