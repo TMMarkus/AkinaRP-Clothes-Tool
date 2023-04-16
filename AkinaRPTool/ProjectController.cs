@@ -1,5 +1,4 @@
 ﻿//using Microsoft.Win32;
-using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -37,7 +36,7 @@ namespace AkinaRPTool
                 foreach (string archivo in archivos)
                 {
                     string nombreArchivo = Path.GetFileName(archivo); // Obtener solo el nombre del archivo
-                     // Imprimir el nombre del archivo
+                                                                      // Imprimir el nombre del archivo
                 }
             }
         }
@@ -62,7 +61,7 @@ namespace AkinaRPTool
                     openFileDialog.Title = "Adding clothes for Female sex";
                     break;
             }
-            
+
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 foreach (string filename in openFileDialog.FileNames)

@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Forms;
+using System.Windows.Input;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace AkinaRPTool

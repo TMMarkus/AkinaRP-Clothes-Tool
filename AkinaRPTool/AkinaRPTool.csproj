@@ -5,12 +5,14 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+ <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>AkinaRPTool.App</StartupObject>
     <ApplicationIcon>icon_alpha.ico</ApplicationIcon>
-    <IsPublishable>False</IsPublishable>
+    <IsPublishable>True</IsPublishable>
     <PackageIcon>icon.png</PackageIcon>
+    <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RageLib">
@@ -50,6 +52,7 @@
     <None Update="icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

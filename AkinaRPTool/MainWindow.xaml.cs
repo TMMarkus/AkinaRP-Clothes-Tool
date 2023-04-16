@@ -1,9 +1,5 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,6 +47,8 @@ namespace AkinaRPTool
             allListBox.Visibility = Visibility.Visible;
             maleListBox.Visibility = Visibility.Hidden;
             femaleListBox.Visibility = Visibility.Hidden;
+
+            MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\nhttps://github.com/TMMarkus/AkinaRP-Clothes-Tool\r\n\r\nFor now, only the \"clothing\" part is available, the \"props\" part is not yet developed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         public static void SetStatus(string status)
@@ -128,7 +126,7 @@ namespace AkinaRPTool
                 {
                     editGroupBox.Visibility = Visibility.Visible;
                     clothEditWindow.Visibility = Visibility.Hidden;
-                    pedPropEditWindow.Visibility = Visibility.Hidden;
+                    //pedPropEditWindow.Visibility = Visibility.Hidden;
 
                     if (selectedCloth.IsComponent())
                     {
@@ -147,6 +145,7 @@ namespace AkinaRPTool
                     }
                     else
                     {
+                        /*
                         pedPropEditWindow.Visibility = Visibility.Visible;
                         drawableName.Text = selectedCloth.Name;
                         pedPropName.Text = selectedCloth.Name;
@@ -158,6 +157,7 @@ namespace AkinaRPTool
                         pedPropFlag3.IsChecked = selectedCloth.pedPropFlags.unkFlag3;
                         pedPropFlag4.IsChecked = selectedCloth.pedPropFlags.unkFlag4;
                         pedPropFlag5.IsChecked = selectedCloth.pedPropFlags.unkFlag5;
+                        */
                     }
                 }
             }
@@ -281,6 +281,7 @@ namespace AkinaRPTool
             fpModelPath.Text = selectedCloth.fpModelPath != "" ? selectedCloth.fpModelPath : "Not selected...";
         }
 
+        /*
         private void PedPropName_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (selectedCloth != null)
@@ -318,6 +319,7 @@ namespace AkinaRPTool
             if (selectedCloth != null)
                 selectedCloth.pedPropFlags.unkFlag5 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
         }
+        */
 
         private void ViewOnlySex_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

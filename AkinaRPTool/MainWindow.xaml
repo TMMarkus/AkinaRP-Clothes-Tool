@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AkinaRPTool"
         xmlns:Properties="clr-namespace:AkinaRPTool.Properties" x:Class="AkinaRPTool.MainWindow"
         mc:Ignorable="d"
-        Title="AkinaRP Clothes Tool" Height="450" Width="800" Icon="icon_alpha.ico">
+        Title="[Alpha v0.0.1] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
     <Grid>
         <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Bottom" Background="White" BorderBrush="White" Value="0"/>
         <TextBlock x:Name="currentStatusBar" Height="20" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Background="{x:Null}" Padding="5,0,0,0">
@@ -251,11 +251,13 @@
                     </Grid>
                 </GroupBox>
             </Grid>
-            <Grid x:Name="pedPropEditWindow" HorizontalAlignment="Right" Width="Auto" Visibility="Collapsed">
+            
+            <!--
+            <Grid x:Name="pedPropEditWindow" Width="Auto" Visibility="Hidden">
                 <GroupBox x:Name="pedPropEditGroupBox" Margin="0" Header="Ped prop edit" >
                     <Grid>
                         <Grid Margin="0,50,0,0">
-                            <GroupBox Header="Textures" Width="400" HorizontalAlignment="Left" >
+                            <GroupBox Header="Textures" Width="400" >
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
@@ -281,13 +283,16 @@
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
-                        <GroupBox Header="Ped prop name" HorizontalAlignment="Left" Height="40" Margin="0,0,0,0" VerticalAlignment="Top" Width="200">
-                            <TextBox x:Name="pedPropName" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0" BorderBrush="{x:Null}" TextChanged="PedPropName_TextChanged"/>
+                        <GroupBox Header="Ped prop name" Height="40" Margin="0,0,0,0" Width="200">
+                            <TextBox x:Name="pedPropName" TextWrapping="Wrap" Margin="0" BorderBrush="{x:Null}" TextChanged="PedPropName_TextChanged"/>
                         </GroupBox>
                     </Grid>
                 </GroupBox>
             </Grid>
+            -->
+            
         </Grid>
+        
         <Menu Height="20" Margin="0" VerticalAlignment="Top">
             <MenuItem Header="Project">
                 <MenuItem Header="New"  Click="NewProjectButton_Click"/>
