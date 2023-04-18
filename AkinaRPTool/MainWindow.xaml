@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AkinaRPTool"
         xmlns:Properties="clr-namespace:AkinaRPTool.Properties" x:Class="AkinaRPTool.MainWindow"
         mc:Ignorable="d"
-        Title="[Alpha v0.0.1] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
+        Title="[Alpha v0.0.2] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
     <Grid>
         <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Bottom" Background="White" BorderBrush="White" Value="0"/>
         <TextBlock x:Name="currentStatusBar" Height="20" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Background="{x:Null}" Padding="5,0,0,0">
@@ -238,12 +238,12 @@
                             <Grid Grid.Column="1">
                                 <GroupBox Header="Flags">
                                     <StackPanel Margin="5">
-                                        <CheckBox x:Name="unkFlag1Check" Content="Unknown Flag 1" Checked="UnkFlag1Check_Checked"/>
-                                        <CheckBox x:Name="unkFlag2Check" Content="Unknown Flag 2" Checked="UnkFlag2Check_Checked"/>
-                                        <CheckBox x:Name="unkFlag3Check" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked"/>
-                                        <CheckBox x:Name="unkFlag4Check" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked"/>
-                                        <CheckBox x:Name="isHighHeelsCheck" Content="Is High Heels" Checked="IsHighHeelsCheck_Checked"/>
-                                        <CheckBox x:Name="isReskinCheck" Content="Skin Tone?" Checked="isReskinCheck_Checked"/>
+                                        <CheckBox x:Name="unkFlag1Check" Content="Unknown Flag 1" Checked="UnkFlag1Check_Checked" Unchecked="UnkFlag1Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag2Check" Content="Unknown Flag 2" Checked="UnkFlag2Check_Checked" Unchecked="UnkFlag2Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag3Check" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked" Unchecked="UnkFlag3Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag4Check" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked" Unchecked="UnkFlag4Check_Checked"/>
+                                        <CheckBox x:Name="isHighHeelsCheck" Content="Is High Heels" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
+                                        <CheckBox x:Name="isReskinCheck" Content="Skin Tone?" Checked="isReskinCheck_Checked" Unchecked="isReskinCheck_Checked"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>

@@ -176,6 +176,11 @@ namespace AkinaRPTool
             clothes.Clear();
             maleClothes.Clear();
             femaleClothes.Clear();
+
+            selectedCloth = null;
+
+            clothEditWindow.Visibility = Visibility.Hidden;
+            //pedPropEditWindow.Visibility = Visibility.Hidden;
         }
 
         private void OpenProjectButton_Click(object sender, RoutedEventArgs e)

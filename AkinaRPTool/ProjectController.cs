@@ -87,14 +87,14 @@ namespace AkinaRPTool
 
                                 ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, newTarget);
 
-                                if (nextCloth.drawableType == ClothNameResolver.DrawableType.Shoes || nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories)
+                                if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
                                 {
                                     nextCloth.isReskin = true;
 
                                     if (!WarnShowed)
                                     {
                                         WarnShowed = true;
-                                        MessageBox.Show("You have imported a (Shoe) or (Accessory) clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                     }
                                 }
 
@@ -181,10 +181,10 @@ namespace AkinaRPTool
 
                             ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, targetSex);
 
-                            if (nextCloth.drawableType == ClothNameResolver.DrawableType.Shoes || nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories)
+                            if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
                             {
                                 nextCloth.isReskin = true;
-                                MessageBox.Show("You have imported a (Shoe) or (Accessory) clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                             }
 

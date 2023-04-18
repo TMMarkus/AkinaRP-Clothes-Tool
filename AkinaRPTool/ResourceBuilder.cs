@@ -281,6 +281,7 @@ namespace AkinaRPTool
                                 case 5:
                                 case 8:
                                     nextPropMask = 65; break;
+                                case 6:
                                 case 9:
                                     nextPropMask = 1; break;
                                 case 10:
@@ -301,7 +302,8 @@ namespace AkinaRPTool
                             if (cd.isReskin == true)
                             {
                                 postfix = "r";
-                                ytdPostfix = "uni";
+                                ytdPostfix = "whi";
+                                nextPropMask = 17;
                             }
 
                             foreach (string texPath in cd.textures)
@@ -544,6 +546,7 @@ namespace AkinaRPTool
                                     case 5:
                                     case 8:
                                         nextPropMask = 65; break;
+                                    case 6:
                                     case 9:
                                         nextPropMask = 1; break;
                                     case 10:
@@ -560,6 +563,13 @@ namespace AkinaRPTool
                                 byte texId = (byte)(cd.mainPath.EndsWith("_u.ydd") ? 0 : 1);
                                 string postfix = cd.mainPath.EndsWith("_u.ydd") ? "u" : "r";
                                 string ytdPostfix = cd.mainPath.EndsWith("_u.ydd") ? "uni" : "whi";
+
+                                if (cd.isReskin)
+                                {
+                                    postfix = "r";
+                                    ytdPostfix = "whi";
+                                    nextPropMask = 17;
+                                }
 
                                 foreach (string texPath in cd.textures)
                                 {
@@ -830,6 +840,7 @@ namespace AkinaRPTool
                                 case 5:
                                 case 8:
                                     nextPropMask = 65; break;
+                                case 6:
                                 case 9:
                                     nextPropMask = 1; break;
                                 case 10:
@@ -850,7 +861,8 @@ namespace AkinaRPTool
                             if (cd.isReskin)
                             {
                                 postfix = "r";
-                                ytdPostfix = "uni";
+                                ytdPostfix = "whi";
+                                nextPropMask = 17;
                             }
 
                             foreach (string texPath in cd.textures)
