@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using static AkinaRPTool.ClothData;
@@ -16,6 +18,7 @@ namespace AkinaRPTool
         public static ObservableCollection<ClothData> femaleClothes;
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
+        
 
         public MainWindow()
         {
@@ -113,6 +116,28 @@ namespace AkinaRPTool
 
                 selectedCloth = null;
                 editGroupBox.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private static readonly Regex _regex = new Regex("[^0-9.-]+"); //regex that matches disallowed text
+        private static bool IsTextAllowed(string text)
+        {
+            return !_regex.IsMatch(text);
+        }
+
+        private void OnlyNumberTextBox(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(String)))
+            {
+                String text = (String)e.DataObject.GetData(typeof(String));
+                if (!IsTextAllowed(text))
+                {
+                    e.CancelCommand();
+                }
+            }
+            else
+            {
+                e.CancelCommand();
             }
         }
 

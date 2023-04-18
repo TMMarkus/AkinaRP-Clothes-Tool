@@ -184,17 +184,26 @@
                         
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="0">
+                                <GroupBox Header="ID">
+                                    <Grid>
+                                        <TextBox x:Name="ID" PreviewTextInput="OnlyNumberTextBox" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="12" Background="Transparent" BorderBrush="{x:Null}" MaxLines="1"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+
+                            <Grid Grid.Column="1">
                                 <GroupBox Header="Item name">
                                     <TextBox x:Name="drawableName" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}"/>
                                 </GroupBox>
                             </Grid>
 
-                            <Grid Grid.Column="1">
+                            <Grid Grid.Column="2">
                                 <GroupBox Header="First person model">
                                     <Grid>
                                         <TextBox x:Name="fpModelPath" VerticalAlignment="Stretch" Margin="0, 0, 100, 0" Text="Not selected..." FontSize="12" Background="Transparent" BorderBrush="{x:Null}" IsEnabled="False" IsReadOnly="True" IsUndoEnabled="False" MaxLines="1"/>
