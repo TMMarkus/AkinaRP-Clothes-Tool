@@ -103,32 +103,7 @@ namespace AkinaRPTool
                                     nextCloth.SearchForFPModel();
                                     nextCloth.SearchForTextures();
 
-                                    var _clothes = MainWindow.clothes.ToList();
-
-                                    _clothes.Add(nextCloth);
-
-                                    _clothes = _clothes.OrderBy(x => x.posi).ToList();
-
-                                    MainWindow.clothes.Clear();
-                                    MainWindow.maleClothes.Clear();
-                                    MainWindow.femaleClothes.Clear();
-
-                                    foreach (var cloth in _clothes)
-                                    {
-                                        MainWindow.clothes.Add(cloth);
-                                    }
-
-                                    foreach (var cloth in MainWindow.clothes)
-                                    {
-                                        if (cloth.targetSex == Sex.Male)
-                                        {
-                                            MainWindow.maleClothes.Add(cloth);
-                                        }
-                                        else if (cloth.targetSex == Sex.Female)
-                                        {
-                                            MainWindow.femaleClothes.Add(cloth);
-                                        }
-                                    }
+                                    UpdateClothesList(nextCloth);
 
                                     StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
                                 }
@@ -136,30 +111,7 @@ namespace AkinaRPTool
                                 {
                                     nextCloth.SearchForTextures();
 
-                                    var _clothes = MainWindow.clothes.ToList();
-                                    _clothes.Add(nextCloth);
-                                    _clothes = _clothes.OrderBy(x => x.posi).ToList();
-
-                                    MainWindow.clothes.Clear();
-                                    MainWindow.maleClothes.Clear();
-                                    MainWindow.femaleClothes.Clear();
-
-                                    foreach (var cloth in _clothes)
-                                    {
-                                        MainWindow.clothes.Add(cloth);
-                                    }
-
-                                    foreach (var cloth in MainWindow.clothes)
-                                    {
-                                        if (cloth.targetSex == Sex.Male)
-                                        {
-                                            MainWindow.maleClothes.Add(cloth);
-                                        }
-                                        else if (cloth.targetSex == Sex.Female)
-                                        {
-                                            MainWindow.femaleClothes.Add(cloth);
-                                        }
-                                    }
+                                    UpdateClothesList(nextCloth);
 
                                     StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
                                 }
@@ -193,32 +145,7 @@ namespace AkinaRPTool
                                 nextCloth.SearchForFPModel();
                                 nextCloth.SearchForTextures();
 
-                                var _clothes = MainWindow.clothes.ToList();
-
-                                _clothes.Add(nextCloth);
-
-                                _clothes = _clothes.OrderBy(x => x.posi).ToList();
-
-                                MainWindow.clothes.Clear();
-                                MainWindow.maleClothes.Clear();
-                                MainWindow.femaleClothes.Clear();
-
-                                foreach (var cloth in _clothes)
-                                {
-                                    MainWindow.clothes.Add(cloth);
-                                }
-
-                                foreach (var cloth in MainWindow.clothes)
-                                {
-                                    if (cloth.targetSex == Sex.Male)
-                                    {
-                                        MainWindow.maleClothes.Add(cloth);
-                                    }
-                                    else if (cloth.targetSex == Sex.Female)
-                                    {
-                                        MainWindow.femaleClothes.Add(cloth);
-                                    }
-                                }
+                                UpdateClothesList(nextCloth);
 
                                 StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
                             }
@@ -226,30 +153,7 @@ namespace AkinaRPTool
                             {
                                 nextCloth.SearchForTextures();
 
-                                var _clothes = MainWindow.clothes.ToList();
-                                _clothes.Add(nextCloth);
-                                _clothes = _clothes.OrderBy(x => x.posi).ToList();
-
-                                MainWindow.clothes.Clear();
-                                MainWindow.maleClothes.Clear();
-                                MainWindow.femaleClothes.Clear();
-
-                                foreach (var cloth in _clothes)
-                                {
-                                    MainWindow.clothes.Add(cloth);
-                                }
-
-                                foreach (var cloth in MainWindow.clothes)
-                                {
-                                    if (cloth.targetSex == Sex.Male)
-                                    {
-                                        MainWindow.maleClothes.Add(cloth);
-                                    }
-                                    else if (cloth.targetSex == Sex.Female)
-                                    {
-                                        MainWindow.femaleClothes.Add(cloth);
-                                    }
-                                }
+                                UpdateClothesList(nextCloth);
 
                                 StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
                             }
@@ -297,6 +201,39 @@ namespace AkinaRPTool
                     {
                         cloth.SetFPModel(filename);
                     }
+                }
+            }
+        }
+
+        public void UpdateClothesList(ClothData nextCloth = null)
+        {
+            var _clothes = MainWindow.clothes.ToList();
+
+            if (nextCloth != null)
+            {
+                _clothes.Add(nextCloth);
+            }
+
+            _clothes = _clothes.OrderBy(x => x.posi).ToList();
+
+            MainWindow.clothes.Clear();
+            MainWindow.maleClothes.Clear();
+            MainWindow.femaleClothes.Clear();
+
+            foreach (var cloth in _clothes)
+            {
+                MainWindow.clothes.Add(cloth);
+            }
+
+            foreach (var cloth in MainWindow.clothes)
+            {
+                if (cloth.targetSex == Sex.Male)
+                {
+                    MainWindow.maleClothes.Add(cloth);
+                }
+                else if (cloth.targetSex == Sex.Female)
+                {
+                    MainWindow.femaleClothes.Add(cloth);
                 }
             }
         }

@@ -184,22 +184,37 @@
                         
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="150"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="0">
                                 <GroupBox Header="ID">
                                     <Grid>
-                                        <TextBox x:Name="ID" PreviewTextInput="OnlyNumberTextBox" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="12" Background="Transparent" BorderBrush="{x:Null}" MaxLines="1"/>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="25" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBox Grid.Column="0" x:Name="ID" IsEnabled="False" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" FontSize="12" Background="Transparent" BorderBrush="{x:Null}" MaxLines="1" />
+
+                                        <Grid Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="20" />
+                                                <RowDefinition Height="20" />
+                                            </Grid.RowDefinitions>
+                                            <Button Content="⬆️" FontSize="12" x:Name="PlusID" Click="PlusID_Click" Grid.Row="0"/>
+                                            <Button Content="⬇️" FontSize="12" x:Name="RestID" Click="RestID_Click" Grid.Row="1"/>
+                                        </Grid>
                                     </Grid>
                                 </GroupBox>
                             </Grid>
 
                             <Grid Grid.Column="1">
                                 <GroupBox Header="Item name">
-                                    <TextBox x:Name="drawableName" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}"/>
+                                    <TextBox x:Name="drawableName" TextWrapping="Wrap" VerticalAlignment="Center" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}"/>
                                 </GroupBox>
                             </Grid>
 

@@ -1,11 +1,14 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using static AkinaRPTool.ClothData;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AkinaRPTool
 {
@@ -119,25 +122,50 @@ namespace AkinaRPTool
             }
         }
 
-        private static readonly Regex _regex = new Regex("[^0-9.-]+"); //regex that matches disallowed text
-        private static bool IsTextAllowed(string text)
+        private void RestID_Click(object sender, RoutedEventArgs e)
         {
-            return !_regex.IsMatch(text);
+            if (selectedCloth != null && selectedCloth.Posi > 0)
+            {
+                int oldPosi = 1;
+                int newPosi = 0;
+                oldPosi = selectedCloth.Posi;
+                newPosi = selectedCloth.Posi - 1;
+
+                ClothData oldCloth = clothes[oldPosi];
+                ClothData newCloth = clothes[newPosi];
+
+                oldCloth.Posi = newPosi;
+                newCloth.Posi = oldPosi;
+
+                clothes[newPosi] = oldCloth;
+                clothes[oldPosi] = newCloth;
+
+                ID.Text = newPosi.ToString();
+
+                ProjectController.Instance().UpdateClothesList();
+            }
         }
 
-        private void OnlyNumberTextBox(object sender, DataObjectPastingEventArgs e)
+        private void PlusID_Click(object sender, RoutedEventArgs e)
         {
-            if (e.DataObject.GetDataPresent(typeof(String)))
-            {
-                String text = (String)e.DataObject.GetData(typeof(String));
-                if (!IsTextAllowed(text))
-                {
-                    e.CancelCommand();
-                }
-            }
-            else
-            {
-                e.CancelCommand();
+            if (selectedCloth != null && selectedCloth.Posi < clothes.Count - 1) {
+                int oldPosi = 1;
+                int newPosi = 0;
+                oldPosi = selectedCloth.Posi;
+                newPosi = selectedCloth.Posi + 1;
+
+                ClothData oldCloth = clothes[oldPosi];
+                ClothData newCloth = clothes[newPosi];
+
+                oldCloth.Posi = newPosi;
+                newCloth.Posi = oldPosi;
+
+                clothes[newPosi] = oldCloth;
+                clothes[oldPosi] = newCloth;
+
+                ID.Text = newPosi.ToString();
+
+                ProjectController.Instance().UpdateClothesList();
             }
         }
 
@@ -167,6 +195,7 @@ namespace AkinaRPTool
                         unkFlag4Check.IsChecked = selectedCloth.componentFlags.unkFlag4;
                         isHighHeelsCheck.IsChecked = selectedCloth.componentFlags.isHighHeels;
                         isReskinCheck.IsChecked = selectedCloth.isReskin;
+                        ID.Text = selectedCloth.Posi.ToString();
                     }
                     else
                     {
