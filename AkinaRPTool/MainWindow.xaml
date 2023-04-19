@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AkinaRPTool"
         xmlns:Properties="clr-namespace:AkinaRPTool.Properties" x:Class="AkinaRPTool.MainWindow"
         mc:Ignorable="d"
-        Title="[Alpha v0.0.2] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
+        Title="[Alpha v0.0.3] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
     <Grid>
         <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Bottom" Background="White" BorderBrush="White" Value="0"/>
         <TextBlock x:Name="currentStatusBar" Height="20" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Background="{x:Null}" Padding="5,0,0,0">
