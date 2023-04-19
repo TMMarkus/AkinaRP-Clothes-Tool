@@ -1,9 +1,14 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using static AkinaRPTool.ClothData;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AkinaRPTool
 {
@@ -16,6 +21,7 @@ namespace AkinaRPTool
         public static ObservableCollection<ClothData> femaleClothes;
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
+        
 
         public MainWindow()
         {
@@ -66,17 +72,41 @@ namespace AkinaRPTool
             statusProgress.Value = statusProgress.Maximum * progress;
         }
 
-        private void AddAllClothes_Click(object sender, RoutedEventArgs e)
+        private void OpenMenu_Click(object sender, RoutedEventArgs e)
+        {
+            // Mostrar el menú en la posición del cursor del mouse
+            Button boton = (Button)sender;
+            boton.ContextMenu.PlacementTarget = boton;
+            boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            boton.ContextMenu.IsOpen = true;
+        }
+
+        private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
+        {
+            ProjectController.Instance().ShowFolderSelection(Sex.All);
+        }
+
+        private void AddAllClothes_Click_File(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFiles(Sex.All);
         }
 
-        private void AddMaleClothes_Click(object sender, RoutedEventArgs e)
+        private void AddMaleClothes_Click_Folder(object sender, RoutedEventArgs e)
+        {
+            ProjectController.Instance().ShowFolderSelection(Sex.Male);
+        }
+
+        private void AddMaleClothes_Click_File(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFiles(Sex.Male);
         }
 
-        private void AddFemaleClothes_Click(object sender, RoutedEventArgs e)
+        private void AddFemaleClothes_Click_Folder(object sender, RoutedEventArgs e)
+        {
+            ProjectController.Instance().ShowFolderSelection(Sex.Female);
+        }
+
+        private void AddFemaleClothes_Click_File(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFiles(Sex.Female);
         }
@@ -116,6 +146,53 @@ namespace AkinaRPTool
             }
         }
 
+        private void RestID_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedCloth != null && selectedCloth.Posi > 0)
+            {
+                int oldPosi = 1;
+                int newPosi = 0;
+                oldPosi = selectedCloth.Posi;
+                newPosi = selectedCloth.Posi - 1;
+
+                ClothData oldCloth = clothes[oldPosi];
+                ClothData newCloth = clothes[newPosi];
+
+                oldCloth.Posi = newPosi;
+                newCloth.Posi = oldPosi;
+
+                clothes[newPosi] = oldCloth;
+                clothes[oldPosi] = newCloth;
+
+                ID.Text = newPosi.ToString();
+
+                ProjectController.Instance().UpdateClothesList();
+            }
+        }
+
+        private void PlusID_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedCloth != null && selectedCloth.Posi < clothes.Count - 1) {
+                int oldPosi = 1;
+                int newPosi = 0;
+                oldPosi = selectedCloth.Posi;
+                newPosi = selectedCloth.Posi + 1;
+
+                ClothData oldCloth = clothes[oldPosi];
+                ClothData newCloth = clothes[newPosi];
+
+                oldCloth.Posi = newPosi;
+                newCloth.Posi = oldPosi;
+
+                clothes[newPosi] = oldCloth;
+                clothes[oldPosi] = newCloth;
+
+                ID.Text = newPosi.ToString();
+
+                ProjectController.Instance().UpdateClothesList();
+            }
+        }
+
         private void ClothesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
@@ -142,6 +219,7 @@ namespace AkinaRPTool
                         unkFlag4Check.IsChecked = selectedCloth.componentFlags.unkFlag4;
                         isHighHeelsCheck.IsChecked = selectedCloth.componentFlags.isHighHeels;
                         isReskinCheck.IsChecked = selectedCloth.isReskin;
+                        ID.Text = selectedCloth.Posi.ToString();
                     }
                     else
                     {

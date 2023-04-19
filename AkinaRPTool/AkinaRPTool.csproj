@@ -31,10 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="RageLib">
-      <HintPath>..\packages\RageLib\RageLib.dll</HintPath>
+      <HintPath>..\libraries\RageLib\RageLib.dll</HintPath>
     </Reference>
     <Reference Include="RageLib.GTA5">
-      <HintPath>..\packages\RageLib\RageLib.GTA5.dll</HintPath>
+      <HintPath>..\libraries\RageLib\RageLib.GTA5.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

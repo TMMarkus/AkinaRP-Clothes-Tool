@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AkinaRPTool"
         xmlns:Properties="clr-namespace:AkinaRPTool.Properties" x:Class="AkinaRPTool.MainWindow"
         mc:Ignorable="d"
-        Title="[Alpha v0.0.2] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
+        Title="[Alpha v0.0.3] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
     <Grid>
         <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Bottom" Background="White" BorderBrush="White" Value="0"/>
         <TextBlock x:Name="currentStatusBar" Height="20" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Background="{x:Null}" Padding="5,0,0,0">
@@ -165,9 +165,36 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="addAllClothes" Content="⚥ All" Click="AddAllClothes_Click" Grid.Column="0" FontSize="10"/>
-                        <Button x:Name="addMaleClothes" Content="♂ Male" Click="AddMaleClothes_Click" Grid.Column="1" FontSize="10"/>
-                        <Button x:Name="addFemaleClothes" Content="♀ Female" Click="AddFemaleClothes_Click" Grid.Column="2" FontSize="10"/>
+                        <Button x:Name="addAllClothes" Content="⚥ All" Click="OpenMenu_Click" Grid.Column="0" FontSize="10">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Import folder..." Click="AddAllClothes_Click_Folder" />
+                                    <MenuItem Header="Import file..." Click="AddAllClothes_Click_File" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+
+
+
+                        <Button x:Name="addMaleClothes" Content="♂ Male" Click="OpenMenu_Click" Grid.Column="1" FontSize="10">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Import folder..." Click="AddMaleClothes_Click_Folder" />
+                                    <MenuItem Header="Import file..." Click="AddMaleClothes_Click_File" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+
+
+                        <Button x:Name="addFemaleClothes" Content="♀ Female" Click="OpenMenu_Click" Grid.Column="2" FontSize="10">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Import folder..." Click="AddFemaleClothes_Click_Folder" />
+                                    <MenuItem Header="Import file..." Click="AddFemaleClothes_Click_File" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                        
                         <Button x:Name="removeUnderCursor" Content="❌ Remove" Click="RemoveUnderCursor_Click" Grid.Column="3" FontSize="10"/>
                     </Grid>
                 </Grid>
@@ -184,17 +211,41 @@
                         
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="150"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="0">
-                                <GroupBox Header="Item name">
-                                    <TextBox x:Name="drawableName" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}"/>
+                                <GroupBox Header="ID">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="25" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBox Grid.Column="0" x:Name="ID" IsEnabled="False" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" FontSize="12" Background="Transparent" BorderBrush="{x:Null}" MaxLines="1" />
+
+                                        <Grid Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="20" />
+                                                <RowDefinition Height="20" />
+                                            </Grid.RowDefinitions>
+                                            <Button Content="⬆️" FontSize="12" x:Name="PlusID" Click="PlusID_Click" Grid.Row="0"/>
+                                            <Button Content="⬇️" FontSize="12" x:Name="RestID" Click="RestID_Click" Grid.Row="1"/>
+                                        </Grid>
+                                    </Grid>
                                 </GroupBox>
                             </Grid>
 
                             <Grid Grid.Column="1">
+                                <GroupBox Header="Item name">
+                                    <TextBox x:Name="drawableName" TextWrapping="Wrap" VerticalAlignment="Center" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}"/>
+                                </GroupBox>
+                            </Grid>
+
+                            <Grid Grid.Column="2">
                                 <GroupBox Header="First person model">
                                     <Grid>
                                         <TextBox x:Name="fpModelPath" VerticalAlignment="Stretch" Margin="0, 0, 100, 0" Text="Not selected..." FontSize="12" Background="Transparent" BorderBrush="{x:Null}" IsEnabled="False" IsReadOnly="True" IsUndoEnabled="False" MaxLines="1"/>

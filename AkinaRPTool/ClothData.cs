@@ -103,6 +103,11 @@ namespace AkinaRPTool
             {
                 return posi;
             }
+            set
+            {
+                posi = value;
+                OnPropertyChanged("Posi");
+            }
         }
 
         public ClothData()
