@@ -1,17 +1,65 @@
 ﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static AkinaRPTool.ClothData;
+using static AkinaRPTool.ClothNameResolver;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace AkinaRPTool
 {
+    public class ComboTypeItem : object
+    {
+        protected string m_Name;
+		protected ClothNameResolver.Type m_Value;
+
+        public ComboTypeItem(string name, ClothNameResolver.Type in_value)
+        {
+            m_Name = name;
+            m_Value = in_value;
+        }
+
+        public ClothNameResolver.Type GetValue()
+        {
+            return m_Value;
+        }
+
+        public override string ToString()
+        {
+            return m_Name;
+        }
+    };
+
+    public class ComboCategoryItem : object
+    {
+        protected string m_Name;
+        protected ClothNameResolver.DrawableType m_Value;
+
+        public ComboCategoryItem(string name, ClothNameResolver.DrawableType in_value)
+        {
+            m_Name = name;
+            m_Value = in_value;
+        }
+
+        public ClothNameResolver.DrawableType GetValue()
+        {
+            return m_Value;
+        }
+
+        public override string ToString()
+        {
+            return m_Name;
+        }
+    };
+
     public partial class MainWindow : Window
     {
         private static TextBlock statusTextBlock = null;
@@ -21,7 +69,7 @@ namespace AkinaRPTool
         public static ObservableCollection<ClothData> femaleClothes;
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
-        
+        private static string appVersion = "v0.0.1";
 
         public MainWindow()
         {
@@ -53,6 +101,16 @@ namespace AkinaRPTool
             allListBox.Visibility = Visibility.Visible;
             maleListBox.Visibility = Visibility.Hidden;
             femaleListBox.Visibility = Visibility.Hidden;
+
+            editGroupBox.Visibility = Visibility.Hidden;
+            clothEditWindow.Visibility = Visibility.Hidden;
+            //pedPropEditWindow.Visibility = Visibility.Hidden;
+
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            appVersion = "[Alpha v" + fvi.FileVersion + "] AkinaRP Clothes Tool by TMMarkus";
+
+            WindowMain.Title = appVersion;
 
             MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\nhttps://github.com/TMMarkus/AkinaRP-Clothes-Tool\r\n\r\nFor now, only the \"clothing\" part is available, the \"props\" part is not yet developed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
@@ -237,7 +295,88 @@ namespace AkinaRPTool
                         pedPropFlag5.IsChecked = selectedCloth.pedPropFlags.unkFlag5;
                         */
                     }
+
+                    UpdateTypeList();                    
                 }
+            }
+        }
+
+        private void UpdateTypeList()
+        {
+            itemType.Items.Clear();
+
+            foreach (ClothNameResolver.Type typ in Enum.GetValues(typeof(ClothNameResolver.Type)))
+            {
+                if (typ == ClothNameResolver.Type.PedProp)
+                {
+                    itemType.Items.Add(new ComboTypeItem(typ.ToString() + " (Dont Work!)", typ));
+                }
+                else
+                {
+                    itemType.Items.Add(new ComboTypeItem(typ.ToString(), typ));
+                }
+            }
+
+            bool found = false;
+
+            foreach (ComboTypeItem item in itemType.Items)
+            {
+                if (item.GetValue() == selectedCloth.clothType)
+                {
+                    found = true;
+                    itemType.SelectedItem = item;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                itemType.SelectedIndex = 0;
+            }
+
+            UpdateCategoryList();
+        }
+
+        private void UpdateCategoryList()
+        {
+            itemCategory.Items.Clear();
+
+            if (selectedCloth.clothType == ClothNameResolver.Type.Component)
+            {
+                foreach (ClothNameResolver.DrawableType cat in Enum.GetValues(typeof(ClothNameResolver.DrawableType)))
+                {
+                    if (!cat.ToString().ToLower().Contains("prop") && cat.ToString().ToLower() != "count")
+                    {
+                        itemCategory.Items.Add(new ComboCategoryItem(cat.ToString() + " [" + ClothNameResolver.DrawableTypeToString(cat) + "]", cat));
+                    }
+                }
+            }
+            else
+            {
+                foreach (ClothNameResolver.DrawableType cat in Enum.GetValues(typeof(ClothNameResolver.DrawableType)))
+                {
+                    if (cat.ToString().ToLower().Contains("prop") && cat.ToString().ToLower() != "count")
+                    {
+                        itemCategory.Items.Add(new ComboCategoryItem(cat.ToString() + " [" + ClothNameResolver.DrawableTypeToString(cat) + "]", cat));
+                    }
+                }
+            }
+
+            bool found = false;
+
+            foreach (ComboCategoryItem item in itemCategory.Items)
+            {
+                if (item.GetValue() == selectedCloth.drawableType)
+                {
+                    found = true;
+                    itemCategory.SelectedItem = item;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                itemCategory.SelectedIndex = 0;
             }
         }
 
@@ -426,6 +565,33 @@ namespace AkinaRPTool
             {
                 femaleListBox.Visibility = Visibility.Visible;
             }
+        }
+
+        private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (itemType == null || selectedCloth == null) return;
+
+            ComboBox cmb = sender as ComboBox;
+            ComboTypeItem targeType = cmb.SelectedItem as ComboTypeItem;
+
+            if (targeType == null) return;
+
+            selectedCloth.clothType = targeType.GetValue();
+            ProjectController.Instance().UpdateClothesList();
+            UpdateCategoryList();
+        }
+
+        private void Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (itemCategory == null || selectedCloth == null) return;
+
+            ComboBox cmb = sender as ComboBox;
+            ComboCategoryItem targeCategory = cmb.SelectedItem as ComboCategoryItem;
+
+            if (targeCategory == null) return;
+
+            selectedCloth.drawableType = targeCategory.GetValue();
+            ProjectController.Instance().UpdateClothesList();
         }
     }
 }

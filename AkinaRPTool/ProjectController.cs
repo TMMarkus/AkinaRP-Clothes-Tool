@@ -35,7 +35,6 @@ namespace AkinaRPTool
             // Comprobar si la ruta seleccionada es un archivo
             if (File.Exists(filepath))
             {
-                StatusController.SetStatus("Se ha seleccionado un archivo en vez de una carpeta, abortando operacion...");
                 return;
             }
             // Comprobar si la ruta es una carpeta
@@ -55,106 +54,112 @@ namespace AkinaRPTool
                 {
                     string baseFileName = Path.GetFileName(filename);
 
-                    if (!filename.EndsWith(".ydd"))
+                    if (baseFileName.EndsWith(".ydd"))
                     {
-                        return;
-                    }
+                        ClothNameResolver cData = new ClothNameResolver(baseFileName);
 
-                    ClothNameResolver cData = new ClothNameResolver(baseFileName);
-
-                    if (!cData.isVariation)
-                    {
-                        if (targetSex == ClothData.Sex.All)
+                        if (!cData.isVariation)
                         {
-                            bool WarnShowed = false;
-                            ClothData.Sex newTarget = ClothData.Sex.Male;
-
-                            for (int i = 0; i < 2; i++)
+                            if (cData.clothType == ClothNameResolver.Type.PedProp)
                             {
-                                int newPosi = 0;
-
-                                if (MainWindow.clothes.Count > 0)
-                                {
-                                    newPosi = MainWindow.clothes.Last().Posi + 1;
-                                }
-
-                                ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, newTarget);
-
-                                if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
-                                {
-                                    nextCloth.isReskin = true;
-
-                                    if (!WarnShowed)
-                                    {
-                                        WarnShowed = true;
-                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    }
-                                }
-
-                                if (cData.clothType == ClothNameResolver.Type.Component)
-                                {
-                                    nextCloth.SearchForFPModel();
-                                    nextCloth.SearchForTextures();
-
-                                    UpdateClothesList(nextCloth);
-
-                                    StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
-                                }
-                                else
-                                {
-                                    nextCloth.SearchForTextures();
-
-                                    UpdateClothesList(nextCloth);
-
-                                    StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
-                                }
-
-                                newTarget = ClothData.Sex.Female;
-                            }
-
-                            StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
-                        }
-                        else
-                        {
-
-                            int newPosi = 0;
-
-                            if (MainWindow.clothes.Count > 0)
-                            {
-                                newPosi = MainWindow.clothes.Last().Posi + 1;
-                            }
-
-                            ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, targetSex);
-
-                            if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
-                            {
-                                nextCloth.isReskin = true;
-                                MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                            }
-
-                            if (cData.clothType == ClothNameResolver.Type.Component)
-                            {
-                                nextCloth.SearchForFPModel();
-                                nextCloth.SearchForTextures();
-
-                                UpdateClothesList(nextCloth);
-
-                                StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                MessageBox.Show("You can't import a 'prop' item.\nThis freature isn't yet developed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                             else
                             {
-                                nextCloth.SearchForTextures();
+                                if (targetSex == ClothData.Sex.All)
+                                {
+                                    bool WarnShowed = false;
+                                    ClothData.Sex newTarget = ClothData.Sex.Male;
 
-                                UpdateClothesList(nextCloth);
+                                    for (int i = 0; i < 2; i++)
+                                    {
+                                        int newPosi = 0;
 
-                                StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                        if (MainWindow.clothes.Count > 0)
+                                        {
+                                            newPosi = MainWindow.clothes.Last().Posi + 1;
+                                        }
+
+                                        ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, newTarget);
+
+                                        if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
+                                        {
+                                            nextCloth.isReskin = true;
+
+                                            if (!WarnShowed)
+                                            {
+                                                WarnShowed = true;
+                                                MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            }
+                                        }
+
+                                        if (cData.clothType == ClothNameResolver.Type.Component)
+                                        {
+                                            nextCloth.SearchForFPModel();
+                                            nextCloth.SearchForTextures();
+
+                                            UpdateClothesList(nextCloth);
+
+                                            StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                        }
+                                        else
+                                        {
+                                            nextCloth.SearchForTextures();
+
+                                            UpdateClothesList(nextCloth);
+
+                                            StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                        }
+
+                                        newTarget = ClothData.Sex.Female;
+                                    }
+
+                                    StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
+                                }
+                                else
+                                {
+
+                                    int newPosi = 0;
+
+                                    if (MainWindow.clothes.Count > 0)
+                                    {
+                                        newPosi = MainWindow.clothes.Last().Posi + 1;
+                                    }
+
+                                    ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, targetSex);
+
+                                    if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
+                                    {
+                                        nextCloth.isReskin = true;
+                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                    }
+
+                                    if (cData.clothType == ClothNameResolver.Type.Component)
+                                    {
+                                        nextCloth.SearchForFPModel();
+                                        nextCloth.SearchForTextures();
+
+                                        UpdateClothesList(nextCloth);
+
+                                        StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                    }
+                                    else
+                                    {
+                                        nextCloth.SearchForTextures();
+
+                                        UpdateClothesList(nextCloth);
+
+                                        StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                    }
+                                }
+
                             }
                         }
-                    }
-                    else
-                    {
-                        StatusController.SetStatus("Item " + baseFileName + " can't be added. Looks like it's variant of another item");
+                        else
+                        {
+                            StatusController.SetStatus("Item " + baseFileName + " can't be added. Looks like it's variant of another item");
+                        }
                     }
                 }
             }
@@ -190,12 +195,63 @@ namespace AkinaRPTool
 
                     if (!cData.isVariation)
                     {
-                        if (targetSex == ClothData.Sex.All)
+                        if (cData.clothType == ClothNameResolver.Type.PedProp)
                         {
-                            bool WarnShowed = false;
-                            ClothData.Sex newTarget = ClothData.Sex.Male;
+                            MessageBox.Show("You can't import a 'prop' item.\nThis freature isn't yet developed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            if (targetSex == ClothData.Sex.All)
+                            {
+                                bool WarnShowed = false;
+                                ClothData.Sex newTarget = ClothData.Sex.Male;
 
-                            for (int i = 0; i < 2; i++)
+                                for (int i = 0; i < 2; i++)
+                                {
+                                    int newPosi = 0;
+
+                                    if (MainWindow.clothes.Count > 0)
+                                    {
+                                        newPosi = MainWindow.clothes.Last().Posi + 1;
+                                    }
+
+                                    ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, newTarget);
+
+                                    if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
+                                    {
+                                        nextCloth.isReskin = true;
+
+                                        if (!WarnShowed)
+                                        {
+                                            WarnShowed = true;
+                                            MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        }
+                                    }
+
+                                    if (cData.clothType == ClothNameResolver.Type.Component)
+                                    {
+                                        nextCloth.SearchForFPModel();
+                                        nextCloth.SearchForTextures();
+
+                                        UpdateClothesList(nextCloth);
+
+                                        StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                    }
+                                    else
+                                    {
+                                        nextCloth.SearchForTextures();
+
+                                        UpdateClothesList(nextCloth);
+
+                                        StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                    }
+
+                                    newTarget = ClothData.Sex.Female;
+                                }
+
+                                StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
+                            }
+                            else
                             {
                                 int newPosi = 0;
 
@@ -204,17 +260,13 @@ namespace AkinaRPTool
                                     newPosi = MainWindow.clothes.Last().Posi + 1;
                                 }
 
-                                ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, newTarget);
+                                ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, targetSex);
 
                                 if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
                                 {
                                     nextCloth.isReskin = true;
+                                    MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                                    if (!WarnShowed)
-                                    {
-                                        WarnShowed = true;
-                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    }
                                 }
 
                                 if (cData.clothType == ClothNameResolver.Type.Component)
@@ -234,47 +286,6 @@ namespace AkinaRPTool
 
                                     StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
                                 }
-
-                                newTarget = ClothData.Sex.Female;
-                            }
-
-                            StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
-                        }
-                        else
-                        {
-
-                            int newPosi = 0;
-
-                            if (MainWindow.clothes.Count > 0)
-                            {
-                                newPosi = MainWindow.clothes.Last().Posi + 1;
-                            }
-
-                            ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, targetSex);
-
-                            if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
-                            {
-                                nextCloth.isReskin = true;
-                                MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                            }
-
-                            if (cData.clothType == ClothNameResolver.Type.Component)
-                            {
-                                nextCloth.SearchForFPModel();
-                                nextCloth.SearchForTextures();
-
-                                UpdateClothesList(nextCloth);
-
-                                StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
-                            }
-                            else
-                            {
-                                nextCloth.SearchForTextures();
-
-                                UpdateClothesList(nextCloth);
-
-                                StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
                             }
                         }
                     }

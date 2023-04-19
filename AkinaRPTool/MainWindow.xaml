@@ -6,13 +6,17 @@
         xmlns:local="clr-namespace:AkinaRPTool"
         xmlns:Properties="clr-namespace:AkinaRPTool.Properties" x:Class="AkinaRPTool.MainWindow"
         mc:Ignorable="d"
-        Title="[Alpha v0.0.3] AkinaRP Clothes Tool by TMMarkus" Height="450" Width="800" Icon="icon_alpha.ico">
+        x:Name="WindowMain" Icon="icon_alpha.ico">
     <Grid>
-        <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Bottom" Background="White" BorderBrush="White" Value="0"/>
-        <TextBlock x:Name="currentStatusBar" Height="20" Margin="0" TextWrapping="Wrap" VerticalAlignment="Bottom" Background="{x:Null}" Padding="5,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Top" Background="White" BorderBrush="White" Value="0" Margin="0,306,0,0" Grid.RowSpan="2"/>
+        <TextBlock x:Name="currentStatusBar" Height="20" Margin="0,289,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="{x:Null}" Padding="5,0,0,0" Grid.RowSpan="2">
         </TextBlock>
-        
-        <Grid Margin="5,30,5,25" >
+
+        <Grid Margin="5,30,5,25" Grid.RowSpan="2" >
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="350"/>
@@ -72,7 +76,7 @@
 
                         <DataGrid x:Name="listsItems">
                         </DataGrid>
-                        
+
                         <ListBox x:Name="allListBox" Visibility="Visible" BorderBrush="Black" SelectionChanged="ClothesListBox_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -155,7 +159,7 @@
                         </ListBox>
 
                     </Grid>
-                    
+
 
                     <Grid ShowGridLines="False" Grid.Row="3">
                         <Grid.ColumnDefinitions>
@@ -165,7 +169,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="addAllClothes" Content="⚥ All" Click="OpenMenu_Click" Grid.Column="0" FontSize="10">
+                        <Button x:Name="addAllClothes" Content="⚥ All" Click="OpenMenu_Click" Grid.Column="0" FontSize="12">
                             <Button.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Import folder..." Click="AddAllClothes_Click_Folder" />
@@ -176,7 +180,7 @@
 
 
 
-                        <Button x:Name="addMaleClothes" Content="♂ Male" Click="OpenMenu_Click" Grid.Column="1" FontSize="10">
+                        <Button x:Name="addMaleClothes" Content="♂ Male" Click="OpenMenu_Click" Grid.Column="1" FontSize="12">
                             <Button.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Import folder..." Click="AddMaleClothes_Click_Folder" />
@@ -186,7 +190,7 @@
                         </Button>
 
 
-                        <Button x:Name="addFemaleClothes" Content="♀ Female" Click="OpenMenu_Click" Grid.Column="2" FontSize="10">
+                        <Button x:Name="addFemaleClothes" Content="♀ Female" Click="OpenMenu_Click" Grid.Column="2" FontSize="12">
                             <Button.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Import folder..." Click="AddFemaleClothes_Click_Folder" />
@@ -194,69 +198,94 @@
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
-                        
-                        <Button x:Name="removeUnderCursor" Content="❌ Remove" Click="RemoveUnderCursor_Click" Grid.Column="3" FontSize="10"/>
+
+                        <Button x:Name="removeUnderCursor" Content="❌ Remove" Click="RemoveUnderCursor_Click" Grid.Column="3" FontSize="12"/>
                     </Grid>
                 </Grid>
 
             </GroupBox>
 
-            <Grid x:Name="clothEditWindow" Visibility="Collapsed" Grid.Column="1">
+            <Grid x:Name="clothEditWindow" Visibility="Visible" Grid.Column="1">
                 <GroupBox x:Name="editGroupBox" Header="Drawable edit" >
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="75"/>
-                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="85"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="0">
-                                <GroupBox Header="ID">
+                                <GroupBox Header="ID" FontSize="14" ToolTip="Poisiton to build">
                                     <Grid>
-
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="25" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        
-                                        <TextBox Grid.Column="0" x:Name="ID" IsEnabled="False" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Stretch" FontSize="12" Background="Transparent" BorderBrush="{x:Null}" MaxLines="1" />
+
+                                        <Grid Grid.Column="0">
+                                            <TextBox  x:Name="ID" TextWrapping="Wrap" IsReadOnly="True" FontSize="18" Background="Transparent" BorderBrush="{x:Null}" MaxLines="1" VerticalContentAlignment="Center" IsUndoEnabled="False" HorizontalContentAlignment="Center" Margin="0,0,5,0" />
+                                        </Grid>
 
                                         <Grid Grid.Column="1">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="20" />
                                                 <RowDefinition Height="20" />
                                             </Grid.RowDefinitions>
-                                            <Button Content="⬆️" FontSize="12" x:Name="PlusID" Click="PlusID_Click" Grid.Row="0"/>
-                                            <Button Content="⬇️" FontSize="12" x:Name="RestID" Click="RestID_Click" Grid.Row="1"/>
+                                            <Button Content="/\" FontSize="10" x:Name="PlusID" Click="PlusID_Click" Grid.Row="0" VerticalContentAlignment="Center"/>
+                                            <Button Content="\/" FontSize="10" x:Name="RestID" Click="RestID_Click" Grid.Row="1" VerticalContentAlignment="Center"/>
                                         </Grid>
                                     </Grid>
                                 </GroupBox>
                             </Grid>
 
                             <Grid Grid.Column="1">
-                                <GroupBox Header="Item name">
-                                    <TextBox x:Name="drawableName" TextWrapping="Wrap" VerticalAlignment="Center" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}"/>
+                                <GroupBox Header="Item Name" FontSize="14" ToolTip="Name of the selected item (Only for aplication)" >
+                                    <Grid>
+                                        <TextBox x:Name="drawableName" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}" FontSize="16" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
+                                    </Grid>
                                 </GroupBox>
                             </Grid>
 
                             <Grid Grid.Column="2">
-                                <GroupBox Header="First person model">
+                                <GroupBox Header="First Person Model" FontSize="14" ToolTip="FPS model">
                                     <Grid>
-                                        <TextBox x:Name="fpModelPath" VerticalAlignment="Stretch" Margin="0, 0, 100, 0" Text="Not selected..." FontSize="12" Background="Transparent" BorderBrush="{x:Null}" IsEnabled="False" IsReadOnly="True" IsUndoEnabled="False" MaxLines="1"/>
-                                        <Button x:Name="selectFPModel" HorizontalAlignment="Right" Width="40" Margin="0,0,50,-0.333" Content="Select" BorderBrush="{x:Null}" BorderThickness="0" Click="SelectFPModel_Click"/>
-                                        <Button x:Name="clearFPModel" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="40" Content="Clear" BorderThickness="0" Click="ClearFPModel_Click"/>
+                                        <TextBox x:Name="fpModelPath" Margin="0, 0, 100, 0" Text="Not selected..." FontSize="16" Background="Transparent" BorderBrush="{x:Null}" IsEnabled="False" IsUndoEnabled="False" IsReadOnly="True" MaxLines="1"/>
+                                        <Button x:Name="selectFPModel" HorizontalAlignment="Right" Width="50" Margin="0,0,50,0" Content="Select" BorderBrush="{x:Null}" BorderThickness="0" Click="SelectFPModel_Click"/>
+                                        <Button x:Name="clearFPModel" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="47" Content="Clear" BorderThickness="0" Click="ClearFPModel_Click"/>
                                     </Grid>
                                 </GroupBox>
-                             </Grid>
+                            </Grid>
                         </Grid>
 
                         <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <GroupBox Header="Type" IsEnabled="false" ToolTip="Type of the item (Component, PropPed)">
+                                    <Grid>
+                                        <ComboBox x:Name="itemType" SelectionChanged="Type_SelectionChanged" />
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+
+                            <Grid Grid.Column="1">
+                                <GroupBox Header="Category" ToolTip="Category of the item. This change if you change the item type">
+                                    <ComboBox x:Name="itemCategory" SelectionChanged="Category_SelectionChanged" />
+                                </GroupBox>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Grid.Row="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -279,8 +308,8 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <Button x:Name="addTexture" Content="➕ Add" Click="AddTexture_Click" Grid.Column="0" Padding="10, 1, 10, 1" FontSize="10"/>
-                                            <Button x:Name="removeTexture" Content="❌ Remove" Click="RemoveTexture_Click" Grid.Column="1" Padding="5, 1, 5, 1" FontSize="10"/>
+                                            <Button x:Name="addTexture" Content="➕ Add" Click="AddTexture_Click" Grid.Column="0" Padding="10, 1, 10, 1" FontSize="12"/>
+                                            <Button x:Name="removeTexture" Content="❌ Remove" Click="RemoveTexture_Click" Grid.Column="1" Padding="5, 1, 5, 1" FontSize="12"/>
                                         </Grid>
                                     </Grid>
                                 </GroupBox>
@@ -293,7 +322,7 @@
                                         <CheckBox x:Name="unkFlag2Check" Content="Unknown Flag 2" Checked="UnkFlag2Check_Checked" Unchecked="UnkFlag2Check_Checked"/>
                                         <CheckBox x:Name="unkFlag3Check" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked" Unchecked="UnkFlag3Check_Checked"/>
                                         <CheckBox x:Name="unkFlag4Check" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked" Unchecked="UnkFlag4Check_Checked"/>
-                                        <CheckBox x:Name="isHighHeelsCheck" Content="Is High Heels" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
+                                        <CheckBox x:Name="isHighHeelsCheck" IsEnabled="False" Content="Is High Heels (Dont Work!)" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
                                         <CheckBox x:Name="isReskinCheck" Content="Skin Tone?" Checked="isReskinCheck_Checked" Unchecked="isReskinCheck_Checked"/>
                                     </StackPanel>
                                 </GroupBox>
@@ -302,7 +331,7 @@
                     </Grid>
                 </GroupBox>
             </Grid>
-            
+
             <!--
             <Grid x:Name="pedPropEditWindow" Width="Auto" Visibility="Hidden">
                 <GroupBox x:Name="pedPropEditGroupBox" Margin="0" Header="Ped prop edit" >
@@ -341,10 +370,10 @@
                 </GroupBox>
             </Grid>
             -->
-            
+
         </Grid>
-        
-        <Menu Height="20" Margin="0" VerticalAlignment="Top">
+
+        <Menu Height="20" VerticalAlignment="Top" Grid.RowSpan="2">
             <MenuItem Header="Project">
                 <MenuItem Header="New"  Click="NewProjectButton_Click"/>
                 <MenuItem Header="Open" Click="OpenProjectButton_Click"/>
