@@ -165,9 +165,36 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="addAllClothes" Content="⚥ All" Click="AddAllClothes_Click" Grid.Column="0" FontSize="10"/>
-                        <Button x:Name="addMaleClothes" Content="♂ Male" Click="AddMaleClothes_Click" Grid.Column="1" FontSize="10"/>
-                        <Button x:Name="addFemaleClothes" Content="♀ Female" Click="AddFemaleClothes_Click" Grid.Column="2" FontSize="10"/>
+                        <Button x:Name="addAllClothes" Content="⚥ All" Click="OpenMenu_Click" Grid.Column="0" FontSize="10">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Import folder..." Click="AddAllClothes_Click_Folder" />
+                                    <MenuItem Header="Import file..." Click="AddAllClothes_Click_File" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+
+
+
+                        <Button x:Name="addMaleClothes" Content="♂ Male" Click="OpenMenu_Click" Grid.Column="1" FontSize="10">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Import folder..." Click="AddMaleClothes_Click_Folder" />
+                                    <MenuItem Header="Import file..." Click="AddMaleClothes_Click_File" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+
+
+                        <Button x:Name="addFemaleClothes" Content="♀ Female" Click="OpenMenu_Click" Grid.Column="2" FontSize="10">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Import folder..." Click="AddFemaleClothes_Click_Folder" />
+                                    <MenuItem Header="Import file..." Click="AddFemaleClothes_Click_File" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                        
                         <Button x:Name="removeUnderCursor" Content="❌ Remove" Click="RemoveUnderCursor_Click" Grid.Column="3" FontSize="10"/>
                     </Grid>
                 </Grid>

@@ -1,4 +1,5 @@
 ﻿//using Microsoft.Win32;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,24 +20,142 @@ namespace AkinaRPTool
 
         public void ShowFolderSelection(ClothData.Sex targetSex)
         {
-
-        }
-
-        public void AddFolder(ClothData.Sex targetSex)
-        {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-
+            
             // Mostrar el diálogo para que el usuario seleccione una carpeta
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 string carpeta = folderBrowserDialog.SelectedPath; // Obtener la carpeta seleccionada
-                string[] archivos = Directory.GetFiles(carpeta, "*.ydd"); // Obtener todos los archivos con extensión .ydd
+                FolderRecursive(targetSex, carpeta);
+            }
+        }
 
+        public void FolderRecursive(ClothData.Sex targetSex, string filepath)
+        {
+            // Comprobar si la ruta seleccionada es un archivo
+            if (File.Exists(filepath))
+            {
+                StatusController.SetStatus("Se ha seleccionado un archivo en vez de una carpeta, abortando operacion...");
+                return;
+            }
+            // Comprobar si la ruta es una carpeta
+            else if (Directory.Exists(filepath))
+            {
+                // Obtener la lista de archivos y subdirectorios en la carpeta actual
+                string[] files = Directory.GetFiles(filepath);
+                string[] subDirectories = Directory.GetDirectories(filepath);
 
-                foreach (string archivo in archivos)
+                // Recorrer los subdirectorios y llamar a la función BuscarArchivos de manera recursiva
+                foreach (string subDirectory in subDirectories)
                 {
-                    string nombreArchivo = Path.GetFileName(archivo); // Obtener solo el nombre del archivo
-                                                                      // Imprimir el nombre del archivo
+                    FolderRecursive(targetSex, subDirectory);
+                }
+                // Recorrer los archivos en la carpeta actual y mostrarlos en la consola
+                foreach (string filename in files)
+                {
+                    string baseFileName = Path.GetFileName(filename);
+
+                    if (!filename.EndsWith(".ydd"))
+                    {
+                        return;
+                    }
+
+                    ClothNameResolver cData = new ClothNameResolver(baseFileName);
+
+                    if (!cData.isVariation)
+                    {
+                        if (targetSex == ClothData.Sex.All)
+                        {
+                            bool WarnShowed = false;
+                            ClothData.Sex newTarget = ClothData.Sex.Male;
+
+                            for (int i = 0; i < 2; i++)
+                            {
+                                int newPosi = 0;
+
+                                if (MainWindow.clothes.Count > 0)
+                                {
+                                    newPosi = MainWindow.clothes.Last().Posi + 1;
+                                }
+
+                                ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, newTarget);
+
+                                if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
+                                {
+                                    nextCloth.isReskin = true;
+
+                                    if (!WarnShowed)
+                                    {
+                                        WarnShowed = true;
+                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    }
+                                }
+
+                                if (cData.clothType == ClothNameResolver.Type.Component)
+                                {
+                                    nextCloth.SearchForFPModel();
+                                    nextCloth.SearchForTextures();
+
+                                    UpdateClothesList(nextCloth);
+
+                                    StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                }
+                                else
+                                {
+                                    nextCloth.SearchForTextures();
+
+                                    UpdateClothesList(nextCloth);
+
+                                    StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                }
+
+                                newTarget = ClothData.Sex.Female;
+                            }
+
+                            StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
+                        }
+                        else
+                        {
+
+                            int newPosi = 0;
+
+                            if (MainWindow.clothes.Count > 0)
+                            {
+                                newPosi = MainWindow.clothes.Last().Posi + 1;
+                            }
+
+                            ClothData nextCloth = new ClothData(filename, cData.clothType, cData.drawableType, newPosi, cData.bindedNumber, cData.postfix, targetSex);
+
+                            if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
+                            {
+                                nextCloth.isReskin = true;
+                                MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                            }
+
+                            if (cData.clothType == ClothNameResolver.Type.Component)
+                            {
+                                nextCloth.SearchForFPModel();
+                                nextCloth.SearchForTextures();
+
+                                UpdateClothesList(nextCloth);
+
+                                StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                            }
+                            else
+                            {
+                                nextCloth.SearchForTextures();
+
+                                UpdateClothesList(nextCloth);
+
+                                StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        StatusController.SetStatus("Item " + baseFileName + " can't be added. Looks like it's variant of another item");
+                    }
                 }
             }
         }

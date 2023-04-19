@@ -72,17 +72,41 @@ namespace AkinaRPTool
             statusProgress.Value = statusProgress.Maximum * progress;
         }
 
-        private void AddAllClothes_Click(object sender, RoutedEventArgs e)
+        private void OpenMenu_Click(object sender, RoutedEventArgs e)
+        {
+            // Mostrar el menú en la posición del cursor del mouse
+            Button boton = (Button)sender;
+            boton.ContextMenu.PlacementTarget = boton;
+            boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            boton.ContextMenu.IsOpen = true;
+        }
+
+        private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
+        {
+            ProjectController.Instance().ShowFolderSelection(Sex.All);
+        }
+
+        private void AddAllClothes_Click_File(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFiles(Sex.All);
         }
 
-        private void AddMaleClothes_Click(object sender, RoutedEventArgs e)
+        private void AddMaleClothes_Click_Folder(object sender, RoutedEventArgs e)
+        {
+            ProjectController.Instance().ShowFolderSelection(Sex.Male);
+        }
+
+        private void AddMaleClothes_Click_File(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFiles(Sex.Male);
         }
 
-        private void AddFemaleClothes_Click(object sender, RoutedEventArgs e)
+        private void AddFemaleClothes_Click_Folder(object sender, RoutedEventArgs e)
+        {
+            ProjectController.Instance().ShowFolderSelection(Sex.Female);
+        }
+
+        private void AddFemaleClothes_Click_File(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFiles(Sex.Female);
         }
