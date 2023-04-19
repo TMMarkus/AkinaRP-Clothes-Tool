@@ -201,6 +201,7 @@ namespace AkinaRPTool
 
                 selectedCloth = null;
                 editGroupBox.Visibility = Visibility.Hidden;
+                ProjectController.Instance().UpdateClothesList();
             }
         }
 

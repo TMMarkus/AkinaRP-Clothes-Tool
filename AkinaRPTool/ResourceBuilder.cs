@@ -292,9 +292,6 @@ namespace AkinaRPTool
                                     break;
                             }
 
-                            textureDescription.PropMask = nextPropMask;
-                            textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
-
                             byte texId = (byte)(cd.mainPath.EndsWith("_u.ydd") ? 0 : 1);
                             string postfix = cd.mainPath.EndsWith("_u.ydd") ? "u" : "r";
                             string ytdPostfix = cd.mainPath.EndsWith("_u.ydd") ? "uni" : "whi";
@@ -305,6 +302,9 @@ namespace AkinaRPTool
                                 ytdPostfix = "whi";
                                 nextPropMask = 17;
                             }
+
+                            textureDescription.PropMask = nextPropMask;
+                            textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
 
                             foreach (string texPath in cd.textures)
                             {
@@ -557,9 +557,6 @@ namespace AkinaRPTool
                                         break;
                                 }
 
-                                textureDescription.PropMask = nextPropMask;
-                                textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
-
                                 byte texId = (byte)(cd.mainPath.EndsWith("_u.ydd") ? 0 : 1);
                                 string postfix = cd.mainPath.EndsWith("_u.ydd") ? "u" : "r";
                                 string ytdPostfix = cd.mainPath.EndsWith("_u.ydd") ? "uni" : "whi";
@@ -570,6 +567,9 @@ namespace AkinaRPTool
                                     ytdPostfix = "whi";
                                     nextPropMask = 17;
                                 }
+
+                                textureDescription.PropMask = nextPropMask;
+                                textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
 
                                 foreach (string texPath in cd.textures)
                                 {
@@ -851,9 +851,6 @@ namespace AkinaRPTool
                                     break;
                             }
 
-                            textureDescription.PropMask = nextPropMask;
-                            textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
-
                             byte texId = (byte)(cd.mainPath.EndsWith("_u.ydd") ? 0 : 1);
                             string postfix = cd.mainPath.EndsWith("_u.ydd") ? "u" : "r";
                             string ytdPostfix = cd.mainPath.EndsWith("_u.ydd") ? "uni" : "whi";
@@ -864,6 +861,9 @@ namespace AkinaRPTool
                                 ytdPostfix = "whi";
                                 nextPropMask = 17;
                             }
+
+                            textureDescription.PropMask = nextPropMask;
+                            textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
 
                             foreach (string texPath in cd.textures)
                             {

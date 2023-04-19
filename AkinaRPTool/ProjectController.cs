@@ -9,8 +9,8 @@ namespace AkinaRPTool
 {
     class ProjectController
     {
-
         static ProjectController singleton = null;
+        static bool WarnShowed = false;
         public static ProjectController Instance()
         {
             if (singleton == null)
@@ -21,7 +21,9 @@ namespace AkinaRPTool
         public void ShowFolderSelection(ClothData.Sex targetSex)
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            
+
+            WarnShowed = false;
+
             // Mostrar el diálogo para que el usuario seleccione una carpeta
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
@@ -68,7 +70,7 @@ namespace AkinaRPTool
                             {
                                 if (targetSex == ClothData.Sex.All)
                                 {
-                                    bool WarnShowed = false;
+                                    
                                     ClothData.Sex newTarget = ClothData.Sex.Male;
 
                                     for (int i = 0; i < 2; i++)
@@ -131,8 +133,11 @@ namespace AkinaRPTool
                                     if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
                                     {
                                         nextCloth.isReskin = true;
-                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+                                        if (!WarnShowed)
+                                        {
+                                            WarnShowed = true;
+                                            MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        }
                                     }
 
                                     if (cData.clothType == ClothNameResolver.Type.Component)
@@ -188,6 +193,8 @@ namespace AkinaRPTool
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                WarnShowed = false;
+
                 foreach (string filename in openFileDialog.FileNames)
                 {
                     string baseFileName = Path.GetFileName(filename);
@@ -203,7 +210,6 @@ namespace AkinaRPTool
                         {
                             if (targetSex == ClothData.Sex.All)
                             {
-                                bool WarnShowed = false;
                                 ClothData.Sex newTarget = ClothData.Sex.Male;
 
                                 for (int i = 0; i < 2; i++)
@@ -265,7 +271,12 @@ namespace AkinaRPTool
                                 if (nextCloth.drawableType == ClothNameResolver.DrawableType.Accessories || nextCloth.mainPath.EndsWith("_r.ydd"))
                                 {
                                     nextCloth.isReskin = true;
-                                    MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                    if (!WarnShowed)
+                                    {
+                                        WarnShowed = true;
+                                        MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    }
 
                                 }
 
@@ -342,6 +353,14 @@ namespace AkinaRPTool
             if (nextCloth != null)
             {
                 _clothes.Add(nextCloth);
+            }
+
+            int newID = 0;
+
+            foreach (var item in _clothes)
+            {
+                item.Posi = newID;
+                newID++;
             }
 
             _clothes = _clothes.OrderBy(x => x.posi).ToList();
