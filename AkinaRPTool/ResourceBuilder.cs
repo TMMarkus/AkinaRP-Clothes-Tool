@@ -1,14 +1,21 @@
-﻿using RageLib.Archives;
+﻿using CodeWalker.GameFiles;
+using RageLib.Archives;
 using RageLib.GTA5.Archives;
 using RageLib.GTA5.ArchiveWrappers;
 using RageLib.GTA5.ResourceWrappers.PC.Meta.Structures;
 using RageLib.Resources.GTA5.PC.GameFiles;
 using RageLib.Resources.GTA5.PC.Meta;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Xml;
+using System.Xml.Linq;
 using static AkinaRPTool.ClothData;
+using MCAnchorProps = RageLib.GTA5.ResourceWrappers.PC.Meta.Structures.MCAnchorProps;
+using MCComponentInfo = RageLib.GTA5.ResourceWrappers.PC.Meta.Structures.MCComponentInfo;
 
 namespace AkinaRPTool
 {
@@ -230,6 +237,10 @@ namespace AkinaRPTool
         private static string[] prefixes = { "mp_m_", "mp_f_" };
         private static string[] folderNames = { "ped_male", "ped_female" };
 
+        
+        ///// OTHERS FORMATS FOR NOW ONLY FIVEM ////
+
+        /*
         public static void BuildResourceAltv(string outputFolder, string collectionName)
         {
             List<string> streamCfgMetas = new List<string>();
@@ -789,6 +800,9 @@ namespace AkinaRPTool
                 MessageBox.Show("Resource built!");
             }
         }
+        */
+
+        /////////////////////////////////////////////
 
         public static void BuildResourceFivem(string outputFolder, string collectionName)
         {
@@ -796,22 +810,10 @@ namespace AkinaRPTool
 
             for (int sexNr = 0; sexNr < 2; ++sexNr)
             {
-                //Male YMT generating
-                YmtPedDefinitionFile ymt = new YmtPedDefinitionFile();
-
-                ymt.metaYmtName = prefixes[sexNr] + collectionName;
-                ymt.Unk_376833625.DlcName = RageLib.Hash.Jenkins.Hash(prefixes[sexNr] + collectionName);
-
-                MUnk_3538495220[] componentTextureBindings = { null, null, null, null, null, null, null, null, null, null, null, null };
                 int[] componentIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 int[] propIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-                //ymt.Unk_376833625.Unk_1235281004 = 0;
-                //ymt.Unk_376833625.Unk_4086467184 = 0;
-                //ymt.Unk_376833625.Unk_911147899 = 0;
-                //ymt.Unk_376833625.Unk_315291935 = 0;
-                //ymt.Unk_376833625.Unk_2996560424 = ;
-
+                Sex targetSex = Sex.Male;
                 bool isAnyClothAdded = false;
                 bool isAnyPropAdded = false;
 
@@ -820,35 +822,15 @@ namespace AkinaRPTool
                     if (cd.IsComponent())
                     {
                         byte componentTypeID = cd.GetComponentTypeID();
+                        
 
                         if (cd.textures.Count > 0 && (int)cd.targetSex == sexNr)
                         {
-                            YmtPedDefinitionFile targetYmt = ymt;
-
-                            if (componentTextureBindings[componentTypeID] == null)
-                                componentTextureBindings[componentTypeID] = new MUnk_3538495220();
-
-                            MUnk_1535046754 textureDescription = new MUnk_1535046754();
-
-                            byte nextPropMask = 17;
-
-                            switch (componentTypeID)
+                            if (!isAnyClothAdded)
                             {
-                                case 2:
-                                case 7:
-                                    nextPropMask = 11; break;
-                                case 5:
-                                case 8:
-                                    nextPropMask = 65; break;
-                                case 6:
-                                case 9:
-                                    nextPropMask = 1; break;
-                                case 10:
-                                    nextPropMask = 5; break;
-                                case 11:
-                                    nextPropMask = 1; break;
-                                default:
-                                    break;
+                                isAnyClothAdded = true;
+                                Directory.CreateDirectory(outputFolder + "\\stream");
+                                Directory.CreateDirectory(outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName);
                             }
 
                             byte texId = (byte)(cd.mainPath.EndsWith("_u.ydd") ? 0 : 1);
@@ -859,68 +841,28 @@ namespace AkinaRPTool
                             {
                                 postfix = "r";
                                 ytdPostfix = "whi";
-                                nextPropMask = 17;
-                            }
-
-                            textureDescription.PropMask = nextPropMask;
-                            textureDescription.Unk_2806194106 = (byte)(cd.fpModelPath != "" ? 1 : 0);
-
-                            foreach (string texPath in cd.textures)
-                            {
-                                MUnk_1036962405 texInfo = new MUnk_1036962405();
-                                texInfo.Distribution = 255;
-                                texInfo.TexId = texId;
-                                textureDescription.ATexData.Add(texInfo);
-                            }
-
-                            textureDescription.ClothData.Unk_2828247905 = 0;
-
-                            componentTextureBindings[componentTypeID].Unk_1756136273.Add(textureDescription);
-
-                            byte componentTextureLocalId = (byte)(componentTextureBindings[componentTypeID].Unk_1756136273.Count - 1);
-
-                            MCComponentInfo componentInfo = new MCComponentInfo();
-                            componentInfo.Unk_802196719 = 0;
-                            componentInfo.Unk_4233133352 = 0;
-                            componentInfo.Unk_128864925.b0 = (byte)(cd.componentFlags.unkFlag1 ? 1 : 0);
-                            componentInfo.Unk_128864925.b1 = (byte)(cd.componentFlags.unkFlag2 ? 1 : 0);
-                            componentInfo.Unk_128864925.b2 = (byte)(cd.componentFlags.unkFlag3 ? 1 : 0);
-                            componentInfo.Unk_128864925.b3 = (byte)(cd.componentFlags.unkFlag4 ? 1 : 0);
-                            componentInfo.Unk_128864925.b4 = (byte)(cd.componentFlags.isHighHeels ? 1 : 0);
-                            componentInfo.Flags = 0;
-                            componentInfo.Inclusions = 0;
-                            componentInfo.Exclusions = 0;
-                            componentInfo.Unk_1613922652 = 0;
-                            componentInfo.Unk_2114993291 = 0;
-                            componentInfo.Unk_3509540765 = componentTypeID;
-                            componentInfo.Unk_4196345791 = componentTextureLocalId;
-
-                            targetYmt.Unk_376833625.CompInfos.Add(componentInfo);
-
-                            if (!isAnyClothAdded)
-                            {
-                                isAnyClothAdded = true;
-                                Directory.CreateDirectory(outputFolder + "\\stream");
-                                Directory.CreateDirectory(outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName);
                             }
 
                             int currentComponentIndex = componentIndexes[componentTypeID]++;
-
                             string componentNumerics = currentComponentIndex.ToString().PadLeft(3, '0');
                             string prefix = cd.GetPrefix();
 
+                            // COPY THE MODEL YDD
                             File.Copy(cd.mainPath, outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "^" + prefix + "_" + componentNumerics + "_" + postfix + ".ydd", true);
 
+                            // COPY TEXTURES
                             char offsetLetter = 'a';
                             for (int i = 0; i < cd.textures.Count; ++i)
                                 File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + "_" + ytdPostfix + ".ytd", true);
 
+                            // COPY FPS MODEL
                             if (cd.fpModelPath != "")
                                 File.Copy(cd.fpModelPath, outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "^" + prefix + "_" + componentNumerics + "_" + postfix + "_1.ydd", true);
                         }
                     }
                     else
                     {
+                        /* PROPS SYSTEM
                         Unk_2834549053 anchor = (Unk_2834549053)cd.GetPedPropTypeID();
 
                         if (cd.textures.Count > 0 && (int)cd.targetSex == sexNr)
@@ -980,31 +922,17 @@ namespace AkinaRPTool
                                 File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + ".ytd", true);
                             }
                         }
-                    }
-                }
-
-
-                if (isAnyClothAdded)
-                {
-
-                    int arrIndex = 0;
-                    for (int i = 0; i < componentTextureBindings.Length; ++i)
-                    {
-                        if (componentTextureBindings[i] != null)
-                        {
-                            byte id = (byte)(arrIndex++);
-                            ymt.Unk_376833625.Unk_2996560424.SetByte(i, id);
-                        }
-
-                        ymt.Unk_376833625.Components[(Unk_884254308)i] = componentTextureBindings[i];
+                        */
                     }
                 }
 
                 if (isAnyClothAdded || isAnyPropAdded)
                 {
-                    ymt.Save(outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".ymt");
+                    string filePath = outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".ymt";
+                    GenerateYMT(filePath, targetSex);
                     File.WriteAllText(outputFolder + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta", GenerateShopMeta((Sex)sexNr, collectionName));
                     resourceLUAMetas.Add(prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta");
+                    targetSex = Sex.Female;
                 }
             }
 
@@ -1012,8 +940,292 @@ namespace AkinaRPTool
 
             MessageBox.Show("Resource built!");
         }
-    
-    
+
+        private static (int[], int) generateAvailComp()
+        {
+            int[] genAvailComp = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+            int compCount = 0;
+
+            foreach (ClothNameResolver.DrawableType avComp in Enum.GetValues(typeof(ClothNameResolver.DrawableType)))
+            {
+                if(MainWindow.clothes.Any(i => i.drawableType == avComp))
+                {
+                    genAvailComp[((int)avComp)] = 0;
+                    compCount++;
+                }
+            }
+
+            return (genAvailComp, compCount);
+        }
+
+        private static int countAvailTex(int componentIndex)
+        {
+            int _textures = 0;
+
+            foreach (ClothData comp in MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.Component && (int)i.drawableType == componentIndex))
+            {
+                _textures = _textures + comp.textures.Count;
+            }
+
+            return _textures % 256; //numAvailTex is byte -> (gunrunning female, uppr has 720 .ytd's and in .ymt its 208)
+        }
+
+
+        public static XElement YMTXML_Schema(string collectionName, Sex targetSex)
+        {
+            bool bHasTexVariations = false;
+            bool bHasDrawblVariations = false;
+            bool bHasLowLODs = false;
+            bool bIsSuperLOD = false;
+            string dlcName = collectionName;
+
+            XElement xml;
+
+            // TOP OF FILE || START -> CPedVariationInfo
+            if (targetSex == Sex.Male)
+            {
+                xml = new XElement("CPedVariationInfo", new XAttribute("name", "mp_m_"));
+            }
+            else if(targetSex == Sex.Female)
+            {
+                xml = new XElement("CPedVariationInfo", new XAttribute("name", "mp_f_"));
+            }
+            else
+            {
+                xml = new XElement("CPedVariationInfo");
+            }
+
+            xml.Add(new XElement("bHasTexVariations", new XAttribute("value", bHasTexVariations)));
+            xml.Add(new XElement("bHasDrawblVariations", new XAttribute("value", bHasDrawblVariations)));
+            xml.Add(new XElement("bHasLowLODs", new XAttribute("value", bHasLowLODs)));
+            xml.Add(new XElement("bIsSuperLOD", new XAttribute("value", bIsSuperLOD)));
+
+            (int[] availComp, int availCompCount) = generateAvailComp();
+            xml.Add(new XElement("availComp", String.Join(" ", availComp)));
+
+            // START -> aComponentData3
+            XElement components = new XElement("aComponentData3", new XAttribute("itemType", "CPVComponentData"));
+
+            for (int i = 0; i < availComp.Length; i++)
+            {
+                if (availComp[i] != 255)
+                {
+                    XElement compIndex = new XElement("Item");
+                    compIndex.Add(new XElement("numAvailTex", new XAttribute("value", countAvailTex(i))));
+                    XElement drawblData = new XElement("aDrawblData3", new XAttribute("itemType", "CPVDrawblData"));
+                    compIndex.Add(drawblData);
+
+                    foreach (ClothData item in MainWindow.clothes.Where(iCat => (int)iCat.drawableType == i))
+                    {
+                        XElement drawblDataIndex = new XElement("Item");
+
+                        byte componentTypeID = item.GetComponentTypeID();
+
+                        int _propMask = 17;
+
+                        switch (componentTypeID)
+                        {
+                            case 2:
+                            case 7:
+                                _propMask = 11; break;
+                            case 5:
+                            case 8:
+                                _propMask = 65; break;
+                            case 6:
+                            case 9:
+                                _propMask = 1; break;
+                            case 10:
+                                _propMask = 5; break;
+                            case 11:
+                                _propMask = 1; break;
+                            default:
+                                break;
+                        }
+
+
+                        int _numAlternatives = 0; // Siempre y cuando se llegua a implementar algo asi.
+
+                        if (item.isReskin)
+                        {
+                            _propMask = 17;
+                        }
+
+                        drawblDataIndex.Add(new XElement("propMask", new XAttribute("value", _propMask)));
+                        drawblDataIndex.Add(new XElement("numAlternatives", new XAttribute("value", _numAlternatives)));
+
+                        XElement TexDataIndex = new XElement("aTexData", new XAttribute("itemType", "CPVTextureData"));
+
+                        drawblDataIndex.Add(TexDataIndex);
+
+                        
+                        byte texId = (byte)(item.mainPath.EndsWith("_u.ydd") ? 0 : 1);
+                        
+
+                        foreach (string texPath in item.textures)
+                        {
+                            XElement TexDataItem = new XElement("Item");
+                            TexDataItem.Add(new XElement("texId", new XAttribute("value", texId)));
+                            TexDataItem.Add(new XElement("distribution", new XAttribute("value", 255)));
+                            TexDataIndex.Add(TexDataItem);
+                        }
+
+                        XElement clothDataItem = new XElement("clothData");
+                        bool _clothData = false; // Siempre y cuando no se acabe implementando
+
+                        clothDataItem.Add(new XElement("ownsCloth", new XAttribute("value", _clothData)));
+                        drawblDataIndex.Add(clothDataItem);
+                        drawblData.Add(drawblDataIndex);
+                    }
+
+                    if (!drawblData.IsEmpty)
+                    {
+                        components.Add(compIndex);
+                    }
+                }
+            }
+
+            xml.Add(components);
+            // END -> aComponentData3
+
+            // START -> aSelectionSets
+            xml.Add(new XElement("aSelectionSets", new XAttribute("itemType", "CPedSelectionSet"))); //never seen it used anywhere i think(?)
+            // END -> aSelectionSets
+
+            // START -> compInfos
+            XElement compInfo = new XElement("compInfos", new XAttribute("itemType", "CComponentInfo"));
+
+            foreach (ClothData cloth in MainWindow.clothes)
+            {
+                XElement compInfoItem = new XElement("Item");
+
+                compInfoItem.Add(new XElement("hash_2FD08CEF", "none")); //not sure what it does
+                compInfoItem.Add(new XElement("hash_FC507D28", "none")); //not sure what it does
+                compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));  //component expressionMods (?) - gives ability to do heels
+                compInfoItem.Add(new XElement("flags", new XAttribute("value", 0))); //not sure what it does
+                compInfoItem.Add(new XElement("inclusions", "0")); //not sure what it does
+                compInfoItem.Add(new XElement("exclusions", "0")); //not sure what it does
+                compInfoItem.Add(new XElement("hash_6032815C", "PV_COMP_HEAD")); //probably everything has PV_COMP_HEAD (?)
+                compInfoItem.Add(new XElement("hash_7E103C8B", new XAttribute("value", 0))); //not sure what it does
+                compInfoItem.Add(new XElement("hash_D12F579D", new XAttribute("value", (int) cloth.drawableType))); //component id (jbib = 11, lowr = 4, etc)
+                compInfoItem.Add(new XElement("hash_FA1F27BF", new XAttribute("value", cloth.posi))); // drawable index (000, 001, 002 etc)
+
+                compInfo.Add(compInfoItem);
+            }
+            
+            xml.Add(compInfo);
+            // END -> compInfos
+
+            // PROPS EXPORT MAYBE ONE DAY
+
+            /*
+            // START -> propInfo
+            int numAvailPropsCount = 0;
+            for (int i = 0; i < MainWindow.Props.Count(); i++)
+            {
+                numAvailPropsCount += MainWindow.Props.ElementAt(i).propList.Count();
+            }
+
+            XElement propInfo = new XElement("propInfo");
+            propInfo.Add(new XElement("numAvailProps", new XAttribute("value", numAvailPropsCount % 256)));
+
+            XElement aPropMetaData = new XElement("aPropMetaData", new XAttribute("itemType", "CPedPropMetaData"));
+            foreach (var p in MainWindow.Props)
+            {
+                foreach (var prop in p.propList)
+                {
+                    XElement aPropMetaDataItem = new XElement("Item");
+                    aPropMetaDataItem.Add(new XElement("audioId", prop.propAudioId));
+                    aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", prop.propExpressionMods)));
+                    XElement texData = new XElement("texData", new XAttribute("itemType", "CPedPropTexData"));
+                    foreach (var txt in prop.propTextureList)
+                    {
+                        XElement texDataItem = new XElement("Item");
+                        texDataItem.Add(new XElement("inclusions", txt.propInclusions));
+                        texDataItem.Add(new XElement("exclusions", txt.propExclusions));
+                        texDataItem.Add(new XElement("texId", new XAttribute("value", txt.propTexId)));
+                        texDataItem.Add(new XElement("inclusionId", new XAttribute("value", txt.propInclusionId)));
+                        texDataItem.Add(new XElement("exclusionId", new XAttribute("value", txt.propExclusionId)));
+                        texDataItem.Add(new XElement("distribution", new XAttribute("value", txt.propDistribution)));
+                        texData.Add(texDataItem);
+                    }
+                    aPropMetaDataItem.Add(texData);
+
+                    //check if there is renderFlags set, if not save it as "<renderFlags />" - earlier it was "<renderFlags></renderFlags>"
+                    if (prop.propRenderFlags.Length > 0)
+                    {
+                        aPropMetaDataItem.Add(new XElement("renderFlags", prop.propRenderFlags));
+                    }
+                    else
+                    {
+                        aPropMetaDataItem.Add(new XElement("renderFlags"));
+                    }
+
+                    aPropMetaDataItem.Add(new XElement("propFlags", new XAttribute("value", prop.propPropFlags)));
+                    aPropMetaDataItem.Add(new XElement("flags", new XAttribute("value", prop.propFlags)));
+                    aPropMetaDataItem.Add(new XElement("anchorId", new XAttribute("value", prop.propAnchorId)));
+                    aPropMetaDataItem.Add(new XElement("propId", new XAttribute("value", prop.propIndex))); //propId is index of a prop in the same anchorid, so we can use index instead
+                    aPropMetaDataItem.Add(new XElement("hash_AC887A91", new XAttribute("value", prop.propHash_AC887A91)));
+                    aPropMetaData.Add(aPropMetaDataItem);
+                }
+            }
+            propInfo.Add(aPropMetaData);
+
+            XElement aAnchors = new XElement("aAnchors", new XAttribute("itemType", "CAnchorProps"));
+            foreach (var p in MainWindow.Props)
+            {
+                XElement aAnchorsItem = new XElement("Item");
+                string[] props = new string[p.propList.Count()];
+                for (int i = 0; i < p.propList.Count(); i++)
+                {
+                    props[i] = p.propList.ElementAt(i).propTextureList.Count().ToString();
+                }
+                aAnchorsItem.Add(new XElement("props", String.Join(" ", props)));
+
+                string pname = p.propHeader.Substring(2);
+                switch (pname.Substring(0, 1))
+                {
+                    case "L":
+                        aAnchorsItem.Add(new XElement("anchor", "ANCHOR_LEFT_" + pname.Substring(1)));
+                        break;
+                    case "R":
+                        aAnchorsItem.Add(new XElement("anchor", "ANCHOR_RIGHT_" + pname.Substring(1)));
+                        break;
+                    default:
+                        aAnchorsItem.Add(new XElement("anchor", "ANCHOR_" + pname));
+                        break;
+                }
+
+                aAnchors.Add(aAnchorsItem);
+            }
+
+            propInfo.Add(aAnchors);
+
+            xml.Add(propInfo);
+            // END -> propInfo
+            */
+
+
+            // dlcName Field
+            XElement dlcNameField = new XElement("dlcName", dlcName);
+            xml.Add(dlcNameField);
+
+            return xml;
+            // END OF FILE || END -> CPedVariationInfo
+        }
+        public static void GenerateYMT(string filePath, Sex targetSex)
+        {
+            XElement xmlFile = YMTXML_Schema(filePath, targetSex);
+            xmlFile.Save(filePath);
+
+            //create XmlDocument from XElement (codewalker.core requires XmlDocument)
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.Load(xmlFile.CreateReader());
+
+            Meta meta = XmlMeta.GetMeta(xmldoc);
+            byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
+
+            File.WriteAllBytes(filePath, newYmtBytes);
+        }
        
     }
 }

@@ -58,11 +58,11 @@ namespace AkinaRPTool
             switch (resType)
             {
                 case TargetResourceType.Altv:
-                    ResourceBuilder.BuildResourceAltv(outputFolder, collectionName);
+                    //ResourceBuilder.BuildResourceAltv(outputFolder, collectionName);
                     break;
 
                 case TargetResourceType.Single:
-                    ResourceBuilder.BuildResourceSingle(outputFolder, collectionName);
+                    //ResourceBuilder.BuildResourceSingle(outputFolder, collectionName);
                     break;
 
                 case TargetResourceType.Fivem:
