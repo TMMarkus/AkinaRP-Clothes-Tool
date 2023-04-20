@@ -27,19 +27,19 @@ namespace AkinaRPTool
             string dlcName = (targetSex == Sex.Male ? "mp_m_" : "mp_f_") + collectionName;
             string character = (targetSex == Sex.Male ? "SCR_CHAR_MULTIPLAYER" : "SCR_CHAR_MULTIPLAYER_F");
             return $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-                    <ShopPedApparel>
-	                    <pedName>{targetName}</pedName>
-	                    <dlcName>{dlcName}</dlcName>
-	                    <fullDlcName>{targetName}_{dlcName}</fullDlcName>
-	                    <eCharacter>{character}</eCharacter>
-	                    <creatureMetaData>MP_CreatureMetadata_{collectionName}</creatureMetaData>
-	                    <pedOutfits>
-	                    </pedOutfits>
-	                    <pedComponents>
-	                    </pedComponents>
-	                    <pedProps>
-	                    </pedProps>
-                    </ShopPedApparel>";
+<ShopPedApparel>
+    <pedName>{targetName}</pedName>
+    <dlcName>{dlcName}</dlcName>
+    <fullDlcName>{targetName}_{dlcName}</fullDlcName>
+    <eCharacter>{character}</eCharacter>
+    <creatureMetaData>MP_CreatureMetadata_{collectionName}</creatureMetaData>
+    <pedOutfits>
+    </pedOutfits>
+    <pedComponents>
+    </pedComponents>
+    <pedProps>
+    </pedProps>
+</ShopPedApparel>";
         }
 
         public static string GenerateStreamCfg(List<string> files, List<string> metas)
@@ -96,83 +96,83 @@ namespace AkinaRPTool
         public static string GenerateContentXML(string collectionName, bool hasMale, bool hasFemale, bool hasMaleProps, bool hasFemaleProps)
         {
             string str = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-                            <CDataFileMgr__ContentsOfDataFileXml>
-                              <disabledFiles />
-                              <includedXmlFiles />
-                              <includedDataFiles />
-                              <dataFiles>
+<CDataFileMgr__ContentsOfDataFileXml>
+<disabledFiles />
+<includedXmlFiles />
+<includedDataFiles />
+<dataFiles>
 ";
 
             if (hasMale)
             {
-                str += $@"      <Item>
-                          <filename>dlc_{collectionName}:/common/data/mp_m_freemode_01_mp_m_{collectionName}.meta</filename>
-                          <fileType>SHOP_PED_APPAREL_META_FILE</fileType>
-                          <overlay value=""false"" />
-                          <disabled value=""true"" />
-                          <persistent value=""false"" />
-                        </Item>
-                        <Item>
-                          <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male.rpf</filename>
-                          <fileType>RPF_FILE</fileType>
-                          <overlay value=""false"" />
-                          <disabled value=""true"" />
-                          <persistent value=""true"" />
-                        </Item>
+                str += $@"    <Item>
+<filename>dlc_{collectionName}:/common/data/mp_m_freemode_01_mp_m_{collectionName}.meta</filename>
+<fileType>SHOP_PED_APPAREL_META_FILE</fileType>
+<overlay value=""false"" />
+<disabled value=""true"" />
+<persistent value=""false"" />
+</Item>
+<Item>
+<filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male.rpf</filename>
+<fileType>RPF_FILE</fileType>
+<overlay value=""false"" />
+<disabled value=""true"" />
+<persistent value=""true"" />
+</Item>
 ";
             }
 
             if (hasFemale)
             {
                 str += $@"    <Item>
-                              <filename>dlc_{collectionName}:/common/data/mp_f_freemode_01_mp_f_{collectionName}.meta</filename>
-                              <fileType>SHOP_PED_APPAREL_META_FILE</fileType>
-                              <overlay value=""false"" />
-                              <disabled value=""true"" />
-                              <persistent value=""false"" />
-                            </Item>
-                            <Item>
-                              <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female.rpf</filename>
-                              <fileType>RPF_FILE</fileType>
-                              <overlay value=""false"" />
-                              <disabled value=""true"" />
-                              <persistent value=""true"" />
-                            </Item>
+<filename>dlc_{collectionName}:/common/data/mp_f_freemode_01_mp_f_{collectionName}.meta</filename>
+<fileType>SHOP_PED_APPAREL_META_FILE</fileType>
+<overlay value=""false"" />
+<disabled value=""true"" />
+<persistent value=""false"" />
+</Item>
+<Item>
+<filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female.rpf</filename>
+<fileType>RPF_FILE</fileType>
+<overlay value=""false"" />
+<disabled value=""true"" />
+<persistent value=""true"" />
+</Item>
 ";
             }
 
             if (hasMaleProps)
             {
-                str += $@"      <Item>
-                                <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male_p.rpf</filename>
-                                <fileType>RPF_FILE</fileType>
-                                <overlay value=""false"" />
-                                <disabled value=""true"" />
-                                <persistent value=""true"" />
-                            </Item>
+                str += $@"    <Item>
+<filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male_p.rpf</filename>
+<fileType>RPF_FILE</fileType>
+<overlay value=""false"" />
+<disabled value=""true"" />
+<persistent value=""true"" />
+</Item>
 ";
             }
 
             if (hasFemaleProps)
             {
                 str += $@"    <Item>
-                            <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female_p.rpf</filename>
-                            <fileType>RPF_FILE</fileType>
-                            <overlay value=""false"" />
-                            <disabled value=""true"" />
-                            <persistent value=""true"" />
-                        </Item>
+<filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female_p.rpf</filename>
+<fileType>RPF_FILE</fileType>
+<overlay value=""false"" />
+<disabled value=""true"" />
+<persistent value=""true"" />
+</Item>
 ";
             }
 
-            str += $@"</dataFiles>
-                      <contentChangeSets>
-                        <Item>
-                          <changeSetName>{collectionName.ToUpper()}_AUTOGEN</changeSetName>
-                          <mapChangeSetData />
-                          <filesToInvalidate />
-                          <filesToDisable />
-                          <filesToEnable>
+            str += $@"    </dataFiles>
+<contentChangeSets>
+<Item>
+<changeSetName>{collectionName.ToUpper()}_AUTOGEN</changeSetName>
+<mapChangeSetData />
+<filesToInvalidate />
+<filesToDisable />
+<filesToEnable>
 ";
             if (hasMale)
             {
@@ -197,10 +197,10 @@ namespace AkinaRPTool
             }
 
             str += $@"      </filesToEnable>
-                            </Item>
-                          </contentChangeSets>
-                          <patchFiles />
-                        </CDataFileMgr__ContentsOfDataFileXml>";
+</Item>
+</contentChangeSets>
+<patchFiles />
+</CDataFileMgr__ContentsOfDataFileXml>";
 
             return str;
         }
@@ -208,34 +208,31 @@ namespace AkinaRPTool
         public static string GenerateSetup2XML(string collectionName, int order = 1000)
         {
             return $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-                        <SSetupData>
-                            <deviceName>dlc_{collectionName}</deviceName>
-                            <datFile>content.xml</datFile>
-                            <timeStamp>07/07/2077 07:07:07</timeStamp>
-                            <nameHash>{collectionName}</nameHash>
-                            <contentChangeSets />
-                            <contentChangeSetGroups>
-                                <Item>
-                                    <NameHash>GROUP_STARTUP</NameHash>
-                                    <ContentChangeSets>
-                                        <Item>{collectionName.ToUpper()}_AUTOGEN</Item>
-                                    </ContentChangeSets>
-                                </Item>
-                            </contentChangeSetGroups>
-                            <startupScript />
-                            <scriptCallstackSize value=""0"" />
-                            <type>EXTRACONTENT_COMPAT_PACK</type>
-                            <order value=""1000"" />
-                            <minorOrder value=""0"" />
-                            <isLevelPack value=""false"" />
-                            <dependencyPackHash />
-                            <requiredVersion />
-                            <subPackCount value=""0"" />
-                        </SSetupData>";
+<SSetupData>
+    <deviceName>dlc_{collectionName}</deviceName>
+    <datFile>content.xml</datFile>
+    <timeStamp>07/07/2077 07:07:07</timeStamp>
+    <nameHash>{collectionName}</nameHash>
+    <contentChangeSets />
+    <contentChangeSetGroups>
+        <Item>
+            <NameHash>GROUP_STARTUP</NameHash>
+            <ContentChangeSets>
+                <Item>{collectionName.ToUpper()}_AUTOGEN</Item>
+            </ContentChangeSets>
+        </Item>
+    </contentChangeSetGroups>
+    <startupScript />
+    <scriptCallstackSize value=""0"" />
+    <type>EXTRACONTENT_COMPAT_PACK</type>
+    <order value=""1000"" />
+    <minorOrder value=""0"" />
+    <isLevelPack value=""false"" />
+    <dependencyPackHash />
+    <requiredVersion />
+    <subPackCount value=""0"" />
+</SSetupData>";
         }
-
-        private static string[] prefixes = { "mp_m_", "mp_f_" };
-        private static string[] folderNames = { "ped_male", "ped_female" };
 
         
         ///// OTHERS FORMATS FOR NOW ONLY FIVEM ////
@@ -250,8 +247,8 @@ namespace AkinaRPTool
                 //Male YMT generating
                 YmtPedDefinitionFile ymt = new YmtPedDefinitionFile();
 
-                ymt.metaYmtName = prefixes[sexNr] + collectionName;
-                ymt.Unk_376833625.DlcName = RageLib.Hash.Jenkins.Hash(prefixes[sexNr] + collectionName);
+                ymt.metaYmtName = prefixes + collectionName;
+                ymt.Unk_376833625.DlcName = RageLib.Hash.Jenkins.Hash(prefixes + collectionName);
 
                 MUnk_3538495220[] componentTextureBindings = { null, null, null, null, null, null, null, null, null, null, null, null };
                 int[] componentIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -354,7 +351,7 @@ namespace AkinaRPTool
                                 isAnyClothAdded = true;
                                 Directory.CreateDirectory(outputFolder + "\\stream");
                                 Directory.CreateDirectory(outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf");
-                                Directory.CreateDirectory(outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName);
+                                Directory.CreateDirectory(outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes + "freemode_01_" + prefixes + collectionName);
                             }
 
                             int currentComponentIndex = componentIndexes[componentTypeID]++;
@@ -362,14 +359,14 @@ namespace AkinaRPTool
                             string componentNumerics = currentComponentIndex.ToString().PadLeft(3, '0');
                             string prefix = cd.GetPrefix();
 
-                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefix + "_" + componentNumerics + "_" + postfix + ".ydd");
+                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes + "freemode_01_" + prefixes + collectionName + "\\" + prefix + "_" + componentNumerics + "_" + postfix + ".ydd");
 
                             char offsetLetter = 'a';
                             for (int i = 0; i < cd.textures.Count; ++i)
-                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + "_" + ytdPostfix + ".ytd");
+                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes + "freemode_01_" + prefixes + collectionName + "\\" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + "_" + ytdPostfix + ".ytd");
 
                             if (cd.fpModelPath != "")
-                                File.Copy(cd.fpModelPath, outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefix + "_" + componentNumerics + "_" + postfix + "_1.ydd");
+                                File.Copy(cd.fpModelPath, outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes + "freemode_01_" + prefixes + collectionName + "\\" + prefix + "_" + componentNumerics + "_" + postfix + "_1.ydd");
                         }
                     }
                     else
@@ -418,7 +415,7 @@ namespace AkinaRPTool
                                 isAnyPropAdded = true;
                                 Directory.CreateDirectory(outputFolder + "\\stream");
                                 Directory.CreateDirectory(outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf");
-                                Directory.CreateDirectory(outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName);
+                                Directory.CreateDirectory(outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf\\" + prefixes + "freemode_01_p_" + prefixes + collectionName);
                             }
 
                             int currentPropIndex = propIndexes[(byte)anchor]++;
@@ -428,12 +425,12 @@ namespace AkinaRPTool
 
                             var ydr = new YdrFile();
 
-                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "\\" + prefix + "_" + componentNumerics + ".ydd", true);
+                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "\\" + prefix + "_" + componentNumerics + ".ydd", true);
 
                             char offsetLetter = 'a';
                             for (int i = 0; i < cd.textures.Count; ++i)
                             {
-                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "\\" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + ".ytd", true);
+                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + folderNames[sexNr] + "_p.rpf\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "\\" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + ".ytd", true);
                             }
                         }
                     }
@@ -463,9 +460,9 @@ namespace AkinaRPTool
 
                 if (isAnyClothAdded || isAnyPropAdded)
                 {
-                    File.WriteAllText(outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta", GenerateShopMeta((Sex)sexNr, collectionName));
-                    streamCfgMetas.Add("stream/" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta: SHOP_PED_APPAREL_META_FILE");
-                    ymt.Save(outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".ymt");
+                    File.WriteAllText(outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".meta", GenerateShopMeta((Sex)sexNr, collectionName));
+                    streamCfgMetas.Add("stream/" + prefixes + "freemode_01_" + prefixes + collectionName + ".meta: SHOP_PED_APPAREL_META_FILE");
+                    ymt.Save(outputFolder + "\\stream\\" + folderNames[sexNr] + ".rpf\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".ymt");
                     streamCfgIncludes.Add("stream/" + folderNames[sexNr] + ".rpf");
                 }
 
@@ -516,8 +513,8 @@ namespace AkinaRPTool
                     //Male YMT generating
                     YmtPedDefinitionFile ymt = new YmtPedDefinitionFile();
 
-                    ymt.metaYmtName = prefixes[sexNr] + collectionName;
-                    ymt.Unk_376833625.DlcName = RageLib.Hash.Jenkins.Hash(prefixes[sexNr] + collectionName);
+                    ymt.metaYmtName = prefixes + collectionName;
+                    ymt.Unk_376833625.DlcName = RageLib.Hash.Jenkins.Hash(prefixes + collectionName);
 
                     MUnk_3538495220[] componentTextureBindings = { null, null, null, null, null, null, null, null, null, null, null, null };
                     int[] componentIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -623,7 +620,7 @@ namespace AkinaRPTool
                                     currComponentRpf = RageArchiveWrapper7.Create(ms, folderNames[sexNr].Replace("ped_", collectionName + "_") + ".rpf");
                                     currComponentRpf.archive_.Encryption = RageArchiveEncryption7.NG;
                                     currComponentDir = currComponentRpf.Root.CreateDirectory();
-                                    currComponentDir.Name = prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName;
+                                    currComponentDir.Name = prefixes + "freemode_01_" + prefixes + collectionName;
                                 }
 
                                 int currentComponentIndex = componentIndexes[componentTypeID]++;
@@ -703,7 +700,7 @@ namespace AkinaRPTool
                                     currPropRpf = RageArchiveWrapper7.Create(ms, folderNames[sexNr].Replace("ped_", collectionName + "_") + "_p.rpf");
                                     currPropRpf.archive_.Encryption = RageArchiveEncryption7.NG;
                                     currPropDir = currPropRpf.Root.CreateDirectory();
-                                    currPropDir.Name = prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName;
+                                    currPropDir.Name = prefixes + "freemode_01_p_" + prefixes + collectionName;
                                 }
 
                                 int currentPropIndex = propIndexes[(byte)anchor]++;
@@ -751,7 +748,7 @@ namespace AkinaRPTool
                         using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(GenerateShopMeta((Sex)sexNr, collectionName))))
                         {
                             var binFile = dataDir.CreateBinaryFile();
-                            binFile.Name = prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta";
+                            binFile.Name = prefixes + "freemode_01_" + prefixes + collectionName + ".meta";
                             binFile.Import(stream);
                         }
                         currComponentRpf.Flush();
@@ -808,29 +805,43 @@ namespace AkinaRPTool
         {
             List<string> resourceLUAMetas = new List<string>();
 
+            Sex newTargetSex = Sex.Male;
+
             for (int sexNr = 0; sexNr < 2; ++sexNr)
             {
                 int[] componentIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 int[] propIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-                Sex targetSex = Sex.Male;
+                string prefixes = "";
+                string folderNames = "";
+
+                if (newTargetSex == Sex.Male)
+                {
+                    prefixes = "mp_m_";
+                    folderNames = "ped_male";
+                }
+                else if (newTargetSex == Sex.Female)
+                {
+                    prefixes = "mp_f_";
+                    folderNames = "ped_female";
+                }
+
                 bool isAnyClothAdded = false;
                 bool isAnyPropAdded = false;
 
-                foreach (ClothData cd in MainWindow.clothes)
+                foreach (ClothData cd in MainWindow.clothes.Where(i => i.targetSex == newTargetSex))
                 {
                     if (cd.IsComponent())
                     {
                         byte componentTypeID = cd.GetComponentTypeID();
-                        
 
-                        if (cd.textures.Count > 0 && (int)cd.targetSex == sexNr)
+                        if (cd.textures.Count > 0 && cd.targetSex == newTargetSex)
                         {
                             if (!isAnyClothAdded)
                             {
                                 isAnyClothAdded = true;
                                 Directory.CreateDirectory(outputFolder + "\\stream");
-                                Directory.CreateDirectory(outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName);
+                                Directory.CreateDirectory(outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName);
                             }
 
                             byte texId = (byte)(cd.mainPath.EndsWith("_u.ydd") ? 0 : 1);
@@ -848,16 +859,16 @@ namespace AkinaRPTool
                             string prefix = cd.GetPrefix();
 
                             // COPY THE MODEL YDD
-                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "^" + prefix + "_" + componentNumerics + "_" + postfix + ".ydd", true);
+                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + "^" + prefix + "_" + componentNumerics + "_" + postfix + ".ydd", true);
 
                             // COPY TEXTURES
                             char offsetLetter = 'a';
                             for (int i = 0; i < cd.textures.Count; ++i)
-                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + "_" + ytdPostfix + ".ytd", true);
+                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + "_" + ytdPostfix + ".ytd", true);
 
                             // COPY FPS MODEL
                             if (cd.fpModelPath != "")
-                                File.Copy(cd.fpModelPath, outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + "^" + prefix + "_" + componentNumerics + "_" + postfix + "_1.ydd", true);
+                                File.Copy(cd.fpModelPath, outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + "^" + prefix + "_" + componentNumerics + "_" + postfix + "_1.ydd", true);
                         }
                     }
                     else
@@ -906,7 +917,7 @@ namespace AkinaRPTool
                             {
                                 isAnyPropAdded = true;
                                 Directory.CreateDirectory(outputFolder + "\\stream");
-                                Directory.CreateDirectory(outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName);
+                                Directory.CreateDirectory(outputFolder + "\\stream\\" + prefixes + "freemode_01_p_" + prefixes + collectionName);
                             }
 
                             int currentPropIndex = propIndexes[(byte)anchor]++;
@@ -914,12 +925,12 @@ namespace AkinaRPTool
                             string componentNumerics = currentPropIndex.ToString().PadLeft(3, '0');
                             string prefix = cd.GetPrefix();
 
-                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "^" + prefix + "_" + componentNumerics + ".ydd", true);
+                            File.Copy(cd.mainPath, outputFolder + "\\stream\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "^" + prefix + "_" + componentNumerics + ".ydd", true);
 
                             char offsetLetter = 'a';
                             for (int i = 0; i < cd.textures.Count; ++i)
                             {
-                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "\\" + prefixes[sexNr] + "freemode_01_p_" + prefixes[sexNr] + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + ".ytd", true);
+                                File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + ".ytd", true);
                             }
                         }
                         */
@@ -928,12 +939,13 @@ namespace AkinaRPTool
 
                 if (isAnyClothAdded || isAnyPropAdded)
                 {
-                    string filePath = outputFolder + "\\stream\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".ymt";
-                    GenerateYMT(filePath, targetSex);
-                    File.WriteAllText(outputFolder + "\\" + prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta", GenerateShopMeta((Sex)sexNr, collectionName));
-                    resourceLUAMetas.Add(prefixes[sexNr] + "freemode_01_" + prefixes[sexNr] + collectionName + ".meta");
-                    targetSex = Sex.Female;
+                    string filePath = outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".ymt";
+                    GenerateYMT(filePath, collectionName, newTargetSex);
+                    File.WriteAllText(outputFolder + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".meta", GenerateShopMeta(newTargetSex, collectionName));
+                    resourceLUAMetas.Add(prefixes + "freemode_01_" + prefixes + collectionName + ".meta");
                 }
+
+                newTargetSex = Sex.Female;
             }
 
             File.WriteAllText(outputFolder + "\\fxmanifest.lua", GenerateResourceLua(resourceLUAMetas));
@@ -971,24 +983,23 @@ namespace AkinaRPTool
         }
 
 
-        public static XElement YMTXML_Schema(string collectionName, Sex targetSex)
+        public static XElement YMTXML_Schema(string fullpath, string collectionName, Sex targetSex)
         {
             bool bHasTexVariations = false;
             bool bHasDrawblVariations = false;
             bool bHasLowLODs = false;
             bool bIsSuperLOD = false;
-            string dlcName = collectionName;
 
             XElement xml;
 
             // TOP OF FILE || START -> CPedVariationInfo
             if (targetSex == Sex.Male)
             {
-                xml = new XElement("CPedVariationInfo", new XAttribute("name", "mp_m_"));
+                xml = new XElement("CPedVariationInfo", new XAttribute("name", "mp_m_" + collectionName));
             }
             else if(targetSex == Sex.Female)
             {
-                xml = new XElement("CPedVariationInfo", new XAttribute("name", "mp_f_"));
+                xml = new XElement("CPedVariationInfo", new XAttribute("name", "mp_f_" + collectionName));
             }
             else
             {
@@ -1204,17 +1215,44 @@ namespace AkinaRPTool
             // END -> propInfo
             */
 
+            XElement propInfo = new XElement("propInfo");
+            XElement numAvailProps = new XElement("numAvailProps", new XAttribute("value", "0"));
+            propInfo.Add(numAvailProps);
+            XElement aPropMetaData = new XElement("aPropMetaData", new XAttribute("itemType", "CPedPropMetaData"));
+            propInfo.Add(aPropMetaData);
+            XElement aAnchors = new XElement("aAnchors", new XAttribute("itemType", "CAnchorProps"));
+            propInfo.Add(aAnchors);
+
+            xml.Add(propInfo);
 
             // dlcName Field
-            XElement dlcNameField = new XElement("dlcName", dlcName);
+
+            string targetDLC = "";
+
+            if (targetSex == Sex.Male)
+            {
+                targetDLC = "mp_m_";
+            }
+            else if(targetSex == Sex.Female)
+            {
+                targetDLC = "mp_f_";
+            }
+            else
+            {
+                targetDLC = "";
+            }
+
+            targetDLC += collectionName;
+
+            XElement dlcNameField = new XElement("dlcName", targetDLC);
             xml.Add(dlcNameField);
 
             return xml;
             // END OF FILE || END -> CPedVariationInfo
         }
-        public static void GenerateYMT(string filePath, Sex targetSex)
+        public static void GenerateYMT(string filePath, string collectionName, Sex targetSex)
         {
-            XElement xmlFile = YMTXML_Schema(filePath, targetSex);
+            XElement xmlFile = YMTXML_Schema(filePath, collectionName, targetSex);
             xmlFile.Save(filePath);
 
             //create XmlDocument from XElement (codewalker.core requires XmlDocument)
@@ -1223,6 +1261,8 @@ namespace AkinaRPTool
 
             Meta meta = XmlMeta.GetMeta(xmldoc);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
+
+            File.WriteAllText(@"C:\Users\TMMarkus\Desktop\test.xml", xmlFile.ToString());
 
             File.WriteAllBytes(filePath, newYmtBytes);
         }

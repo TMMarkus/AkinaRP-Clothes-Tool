@@ -413,6 +413,8 @@ namespace AkinaRPTool
                     ProjectBuilder.LoadProject(filename);
                 }
             }
+
+            ProjectController.Instance().UpdateClothesList();
         }
 
         private void SaveProjectButton_Click(object sender, RoutedEventArgs e)
