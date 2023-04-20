@@ -60,6 +60,7 @@ namespace AkinaRPTool
 
         public string name = "";
         public int posi = 0;
+        public double highHeelsNumber = 1;
         public bool isReskin = false;
 
         public string Icon
