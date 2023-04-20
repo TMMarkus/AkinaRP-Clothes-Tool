@@ -141,7 +141,7 @@ namespace AkinaRPTool
 
         private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
-            ProjectController.Instance().ShowFolderSelection(Sex.All);
+            ProjectController.Instance().AddFolder(Sex.All);
         }
 
         private void AddAllClothes_Click_File(object sender, RoutedEventArgs e)
@@ -151,7 +151,7 @@ namespace AkinaRPTool
 
         private void AddMaleClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
-            ProjectController.Instance().ShowFolderSelection(Sex.Male);
+            ProjectController.Instance().AddFolder(Sex.Male);
         }
 
         private void AddMaleClothes_Click_File(object sender, RoutedEventArgs e)
@@ -161,7 +161,7 @@ namespace AkinaRPTool
 
         private void AddFemaleClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
-            ProjectController.Instance().ShowFolderSelection(Sex.Female);
+            ProjectController.Instance().AddFolder(Sex.Female);
         }
 
         private void AddFemaleClothes_Click_File(object sender, RoutedEventArgs e)

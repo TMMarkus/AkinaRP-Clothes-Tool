@@ -20,19 +20,19 @@ namespace AkinaRPTool
             string dlcName = (targetSex == Sex.Male ? "mp_m_" : "mp_f_") + collectionName;
             string character = (targetSex == Sex.Male ? "SCR_CHAR_MULTIPLAYER" : "SCR_CHAR_MULTIPLAYER_F");
             return $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<ShopPedApparel>
-	<pedName>{targetName}</pedName>
-	<dlcName>{dlcName}</dlcName>
-	<fullDlcName>{targetName}_{dlcName}</fullDlcName>
-	<eCharacter>{character}</eCharacter>
-	<creatureMetaData>MP_CreatureMetadata_{collectionName}</creatureMetaData>
-	<pedOutfits>
-	</pedOutfits>
-	<pedComponents>
-	</pedComponents>
-	<pedProps>
-	</pedProps>
-</ShopPedApparel>";
+                    <ShopPedApparel>
+	                    <pedName>{targetName}</pedName>
+	                    <dlcName>{dlcName}</dlcName>
+	                    <fullDlcName>{targetName}_{dlcName}</fullDlcName>
+	                    <eCharacter>{character}</eCharacter>
+	                    <creatureMetaData>MP_CreatureMetadata_{collectionName}</creatureMetaData>
+	                    <pedOutfits>
+	                    </pedOutfits>
+	                    <pedComponents>
+	                    </pedComponents>
+	                    <pedProps>
+	                    </pedProps>
+                    </ShopPedApparel>";
         }
 
         public static string GenerateStreamCfg(List<string> files, List<string> metas)
@@ -89,83 +89,83 @@ namespace AkinaRPTool
         public static string GenerateContentXML(string collectionName, bool hasMale, bool hasFemale, bool hasMaleProps, bool hasFemaleProps)
         {
             string str = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<CDataFileMgr__ContentsOfDataFileXml>
-  <disabledFiles />
-  <includedXmlFiles />
-  <includedDataFiles />
-  <dataFiles>
+                            <CDataFileMgr__ContentsOfDataFileXml>
+                              <disabledFiles />
+                              <includedXmlFiles />
+                              <includedDataFiles />
+                              <dataFiles>
 ";
 
             if (hasMale)
             {
                 str += $@"      <Item>
-      <filename>dlc_{collectionName}:/common/data/mp_m_freemode_01_mp_m_{collectionName}.meta</filename>
-      <fileType>SHOP_PED_APPAREL_META_FILE</fileType>
-      <overlay value=""false"" />
-      <disabled value=""true"" />
-      <persistent value=""false"" />
-    </Item>
-    <Item>
-      <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male.rpf</filename>
-      <fileType>RPF_FILE</fileType>
-      <overlay value=""false"" />
-      <disabled value=""true"" />
-      <persistent value=""true"" />
-    </Item>
+                          <filename>dlc_{collectionName}:/common/data/mp_m_freemode_01_mp_m_{collectionName}.meta</filename>
+                          <fileType>SHOP_PED_APPAREL_META_FILE</fileType>
+                          <overlay value=""false"" />
+                          <disabled value=""true"" />
+                          <persistent value=""false"" />
+                        </Item>
+                        <Item>
+                          <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male.rpf</filename>
+                          <fileType>RPF_FILE</fileType>
+                          <overlay value=""false"" />
+                          <disabled value=""true"" />
+                          <persistent value=""true"" />
+                        </Item>
 ";
             }
 
             if (hasFemale)
             {
                 str += $@"    <Item>
-      <filename>dlc_{collectionName}:/common/data/mp_f_freemode_01_mp_f_{collectionName}.meta</filename>
-      <fileType>SHOP_PED_APPAREL_META_FILE</fileType>
-      <overlay value=""false"" />
-      <disabled value=""true"" />
-      <persistent value=""false"" />
-    </Item>
-    <Item>
-      <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female.rpf</filename>
-      <fileType>RPF_FILE</fileType>
-      <overlay value=""false"" />
-      <disabled value=""true"" />
-      <persistent value=""true"" />
-    </Item>
+                              <filename>dlc_{collectionName}:/common/data/mp_f_freemode_01_mp_f_{collectionName}.meta</filename>
+                              <fileType>SHOP_PED_APPAREL_META_FILE</fileType>
+                              <overlay value=""false"" />
+                              <disabled value=""true"" />
+                              <persistent value=""false"" />
+                            </Item>
+                            <Item>
+                              <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female.rpf</filename>
+                              <fileType>RPF_FILE</fileType>
+                              <overlay value=""false"" />
+                              <disabled value=""true"" />
+                              <persistent value=""true"" />
+                            </Item>
 ";
             }
 
             if (hasMaleProps)
             {
                 str += $@"      <Item>
-      <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male_p.rpf</filename>
-      <fileType>RPF_FILE</fileType>
-      <overlay value=""false"" />
-      <disabled value=""true"" />
-      <persistent value=""true"" />
-    </Item>
+                                <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_male_p.rpf</filename>
+                                <fileType>RPF_FILE</fileType>
+                                <overlay value=""false"" />
+                                <disabled value=""true"" />
+                                <persistent value=""true"" />
+                            </Item>
 ";
             }
 
             if (hasFemaleProps)
             {
                 str += $@"    <Item>
-      <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female_p.rpf</filename>
-      <fileType>RPF_FILE</fileType>
-      <overlay value=""false"" />
-      <disabled value=""true"" />
-      <persistent value=""true"" />
-    </Item>
+                            <filename>dlc_{collectionName}:/%PLATFORM%/models/cdimages/{collectionName}_female_p.rpf</filename>
+                            <fileType>RPF_FILE</fileType>
+                            <overlay value=""false"" />
+                            <disabled value=""true"" />
+                            <persistent value=""true"" />
+                        </Item>
 ";
             }
 
             str += $@"</dataFiles>
-  <contentChangeSets>
-    <Item>
-      <changeSetName>{collectionName.ToUpper()}_AUTOGEN</changeSetName>
-      <mapChangeSetData />
-      <filesToInvalidate />
-      <filesToDisable />
-      <filesToEnable>
+                      <contentChangeSets>
+                        <Item>
+                          <changeSetName>{collectionName.ToUpper()}_AUTOGEN</changeSetName>
+                          <mapChangeSetData />
+                          <filesToInvalidate />
+                          <filesToDisable />
+                          <filesToEnable>
 ";
             if (hasMale)
             {
@@ -190,10 +190,10 @@ namespace AkinaRPTool
             }
 
             str += $@"      </filesToEnable>
-    </Item>
-  </contentChangeSets>
-  <patchFiles />
-</CDataFileMgr__ContentsOfDataFileXml>";
+                            </Item>
+                          </contentChangeSets>
+                          <patchFiles />
+                        </CDataFileMgr__ContentsOfDataFileXml>";
 
             return str;
         }
@@ -201,30 +201,30 @@ namespace AkinaRPTool
         public static string GenerateSetup2XML(string collectionName, int order = 1000)
         {
             return $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<SSetupData>
-    <deviceName>dlc_{collectionName}</deviceName>
-    <datFile>content.xml</datFile>
-    <timeStamp>07/07/2077 07:07:07</timeStamp>
-    <nameHash>{collectionName}</nameHash>
-    <contentChangeSets />
-    <contentChangeSetGroups>
-        <Item>
-            <NameHash>GROUP_STARTUP</NameHash>
-            <ContentChangeSets>
-                <Item>{collectionName.ToUpper()}_AUTOGEN</Item>
-            </ContentChangeSets>
-        </Item>
-    </contentChangeSetGroups>
-    <startupScript />
-    <scriptCallstackSize value=""0"" />
-    <type>EXTRACONTENT_COMPAT_PACK</type>
-    <order value=""1000"" />
-    <minorOrder value=""0"" />
-    <isLevelPack value=""false"" />
-    <dependencyPackHash />
-    <requiredVersion />
-    <subPackCount value=""0"" />
-</SSetupData>";
+                        <SSetupData>
+                            <deviceName>dlc_{collectionName}</deviceName>
+                            <datFile>content.xml</datFile>
+                            <timeStamp>07/07/2077 07:07:07</timeStamp>
+                            <nameHash>{collectionName}</nameHash>
+                            <contentChangeSets />
+                            <contentChangeSetGroups>
+                                <Item>
+                                    <NameHash>GROUP_STARTUP</NameHash>
+                                    <ContentChangeSets>
+                                        <Item>{collectionName.ToUpper()}_AUTOGEN</Item>
+                                    </ContentChangeSets>
+                                </Item>
+                            </contentChangeSetGroups>
+                            <startupScript />
+                            <scriptCallstackSize value=""0"" />
+                            <type>EXTRACONTENT_COMPAT_PACK</type>
+                            <order value=""1000"" />
+                            <minorOrder value=""0"" />
+                            <isLevelPack value=""false"" />
+                            <dependencyPackHash />
+                            <requiredVersion />
+                            <subPackCount value=""0"" />
+                        </SSetupData>";
         }
 
         private static string[] prefixes = { "mp_m_", "mp_f_" };
@@ -1012,5 +1012,8 @@ namespace AkinaRPTool
 
             MessageBox.Show("Resource built!");
         }
+    
+    
+       
     }
 }
