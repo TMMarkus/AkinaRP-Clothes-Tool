@@ -12,6 +12,7 @@ namespace AkinaRPTool
     {
         public ClothNameResolver.Type clothType;
         public ClothNameResolver.DrawableType drawableType;
+        public ClothNameResolver.PropRenderFlag propRenderFlag = ClothNameResolver.PropRenderFlag.NONE;
 
         public struct ComponentFlags
         {

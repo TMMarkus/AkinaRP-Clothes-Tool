@@ -14,6 +14,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 using static AkinaRPTool.ClothData;
+using static AkinaRPTool.ClothNameResolver;
 using MCAnchorProps = RageLib.GTA5.ResourceWrappers.PC.Meta.Structures.MCAnchorProps;
 using MCComponentInfo = RageLib.GTA5.ResourceWrappers.PC.Meta.Structures.MCComponentInfo;
 
@@ -1026,7 +1027,7 @@ namespace AkinaRPTool
                     XElement drawblData = new XElement("aDrawblData3", new XAttribute("itemType", "CPVDrawblData"));
                     compIndex.Add(drawblData);
 
-                    foreach (ClothData item in MainWindow.clothes.Where(iCat => (int)iCat.drawableType == i))
+                    foreach (ClothData item in MainWindow.clothes.Where(iCat => iCat.clothType == ClothNameResolver.Type.Component && (int)iCat.drawableType == i))
                     {
                         XElement drawblDataIndex = new XElement("Item");
 
@@ -1105,7 +1106,7 @@ namespace AkinaRPTool
             // START -> compInfos
             XElement compInfo = new XElement("compInfos", new XAttribute("itemType", "CComponentInfo"));
 
-            foreach (ClothData cloth in MainWindow.clothes)
+            foreach (ClothData cloth in MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.Component))
             {
                 XElement compInfoItem = new XElement("Item");
 
@@ -1128,82 +1129,103 @@ namespace AkinaRPTool
 
             // PROPS EXPORT MAYBE ONE DAY
 
-            /*
+
             // START -> propInfo
             int numAvailPropsCount = 0;
-            for (int i = 0; i < MainWindow.Props.Count(); i++)
-            {
-                numAvailPropsCount += MainWindow.Props.ElementAt(i).propList.Count();
-            }
+
+            numAvailPropsCount = MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp).Count();
 
             XElement propInfo = new XElement("propInfo");
             propInfo.Add(new XElement("numAvailProps", new XAttribute("value", numAvailPropsCount % 256)));
 
             XElement aPropMetaData = new XElement("aPropMetaData", new XAttribute("itemType", "CPedPropMetaData"));
-            foreach (var p in MainWindow.Props)
+
+            foreach (ClothData prop in MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp))
             {
-                foreach (var prop in p.propList)
+                XElement aPropMetaDataItem = new XElement("Item");
+                aPropMetaDataItem.Add(new XElement("audioId", "none")); // Añade un sonido al prop (No implementado) (Audio ID)
+                aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));
+
+                XElement texData = new XElement("texData", new XAttribute("itemType", "CPedPropTexData"));
+
+                byte texId = (byte)(prop.mainPath.EndsWith("_u.ydd") ? 0 : 1);
+
+                for (int i = 0; i < prop.textures.Count; i++)
                 {
-                    XElement aPropMetaDataItem = new XElement("Item");
-                    aPropMetaDataItem.Add(new XElement("audioId", prop.propAudioId));
-                    aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", prop.propExpressionMods)));
-                    XElement texData = new XElement("texData", new XAttribute("itemType", "CPedPropTexData"));
-                    foreach (var txt in prop.propTextureList)
-                    {
-                        XElement texDataItem = new XElement("Item");
-                        texDataItem.Add(new XElement("inclusions", txt.propInclusions));
-                        texDataItem.Add(new XElement("exclusions", txt.propExclusions));
-                        texDataItem.Add(new XElement("texId", new XAttribute("value", txt.propTexId)));
-                        texDataItem.Add(new XElement("inclusionId", new XAttribute("value", txt.propInclusionId)));
-                        texDataItem.Add(new XElement("exclusionId", new XAttribute("value", txt.propExclusionId)));
-                        texDataItem.Add(new XElement("distribution", new XAttribute("value", txt.propDistribution)));
-                        texData.Add(texDataItem);
-                    }
-                    aPropMetaDataItem.Add(texData);
-
-                    //check if there is renderFlags set, if not save it as "<renderFlags />" - earlier it was "<renderFlags></renderFlags>"
-                    if (prop.propRenderFlags.Length > 0)
-                    {
-                        aPropMetaDataItem.Add(new XElement("renderFlags", prop.propRenderFlags));
-                    }
-                    else
-                    {
-                        aPropMetaDataItem.Add(new XElement("renderFlags"));
-                    }
-
-                    aPropMetaDataItem.Add(new XElement("propFlags", new XAttribute("value", prop.propPropFlags)));
-                    aPropMetaDataItem.Add(new XElement("flags", new XAttribute("value", prop.propFlags)));
-                    aPropMetaDataItem.Add(new XElement("anchorId", new XAttribute("value", prop.propAnchorId)));
-                    aPropMetaDataItem.Add(new XElement("propId", new XAttribute("value", prop.propIndex))); //propId is index of a prop in the same anchorid, so we can use index instead
-                    aPropMetaDataItem.Add(new XElement("hash_AC887A91", new XAttribute("value", prop.propHash_AC887A91)));
-                    aPropMetaData.Add(aPropMetaDataItem);
+                    XElement texDataItem = new XElement("Item");
+                    texDataItem.Add(new XElement("inclusions", "0")); // No se que hace
+                    texDataItem.Add(new XElement("exclusions", "0")); // No se que hace
+                    texDataItem.Add(new XElement("texId", new XAttribute("value", i))); // El indice que tiene la textura.
+                    texDataItem.Add(new XElement("inclusionId", new XAttribute("value", "0"))); // No se que gace
+                    texDataItem.Add(new XElement("exclusionId", new XAttribute("value", "0"))); // No se que hace
+                    texDataItem.Add(new XElement("distribution", new XAttribute("value", "0"))); // No se que hace
+                    texData.Add(texDataItem);
                 }
+                aPropMetaDataItem.Add(texData);
+
+                //check if there is renderFlags set, if not save it as "<renderFlags />" - earlier it was "<renderFlags></renderFlags>"
+                if (prop.propRenderFlag != ClothNameResolver.PropRenderFlag.NONE)
+                {
+                    aPropMetaDataItem.Add(new XElement("renderFlags", prop.propRenderFlag.ToString()));
+                }
+                else
+                {
+                    aPropMetaDataItem.Add(new XElement("renderFlags"));
+                }
+
+                int anchor = (int)prop.drawableType - (int)ClothNameResolver.DrawableType.PropHead;
+                int propIndex = 0;
+
+                foreach (DrawableType type in Enum.GetValues(typeof(DrawableType)))
+                {
+                    if ((int)type == (int)prop.drawableType - (int)ClothNameResolver.DrawableType.PropHead)
+                    {
+                        foreach (ClothData item in MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp && i.drawableType == type))
+                        {
+                            if (item == prop)
+                            {
+                                break;
+                            }
+
+                            propIndex++;
+                        }
+
+                        break;
+                    }
+                }
+
+                aPropMetaDataItem.Add(new XElement("propFlags", new XAttribute("value", "0"))); // No se que hace
+                aPropMetaDataItem.Add(new XElement("flags", new XAttribute("value", "0"))); // No se que hace
+                aPropMetaDataItem.Add(new XElement("anchorId", new XAttribute("value", anchor))); // El indice del item en su categoria
+                aPropMetaDataItem.Add(new XElement("propId", new XAttribute("value", propIndex))); //propId is index of a prop in the same anchorid, so we can use index instead
+                aPropMetaDataItem.Add(new XElement("hash_AC887A91", new XAttribute("value", "0"))); // No se quehace
+                aPropMetaData.Add(aPropMetaDataItem);                
             }
             propInfo.Add(aPropMetaData);
 
             XElement aAnchors = new XElement("aAnchors", new XAttribute("itemType", "CAnchorProps"));
-            foreach (var p in MainWindow.Props)
+            foreach (ClothData prop in MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp))
             {
                 XElement aAnchorsItem = new XElement("Item");
-                string[] props = new string[p.propList.Count()];
-                for (int i = 0; i < p.propList.Count(); i++)
+                string[] props_tex_count = new string[MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp).Count()];
+                for (int i = 0; i < props_tex_count.Length; i++)
                 {
-                    props[i] = p.propList.ElementAt(i).propTextureList.Count().ToString();
+                    props_tex_count[i] = MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp).ToList()[i].textures.Count().ToString();
                 }
-                aAnchorsItem.Add(new XElement("props", String.Join(" ", props)));
+                aAnchorsItem.Add(new XElement("props", String.Join(" ", props_tex_count)));
 
-                string pname = p.propHeader.Substring(2);
-                switch (pname.Substring(0, 1))
+                // REVISAR PORQUE CREO QUE ME LO ACABO DE INVENTAR
+                if (prop.mainPath.EndsWith("L"))
                 {
-                    case "L":
-                        aAnchorsItem.Add(new XElement("anchor", "ANCHOR_LEFT_" + pname.Substring(1)));
-                        break;
-                    case "R":
-                        aAnchorsItem.Add(new XElement("anchor", "ANCHOR_RIGHT_" + pname.Substring(1)));
-                        break;
-                    default:
-                        aAnchorsItem.Add(new XElement("anchor", "ANCHOR_" + pname));
-                        break;
+                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR_LEFT_L"));
+                }
+                else if (prop.mainPath.EndsWith("R"))
+                {
+                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR_RIGHT_L"));
+                }
+                else
+                {
+                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR"));
                 }
 
                 aAnchors.Add(aAnchorsItem);
@@ -1213,17 +1235,7 @@ namespace AkinaRPTool
 
             xml.Add(propInfo);
             // END -> propInfo
-            */
-
-            XElement propInfo = new XElement("propInfo");
-            XElement numAvailProps = new XElement("numAvailProps", new XAttribute("value", "0"));
-            propInfo.Add(numAvailProps);
-            XElement aPropMetaData = new XElement("aPropMetaData", new XAttribute("itemType", "CPedPropMetaData"));
-            propInfo.Add(aPropMetaData);
-            XElement aAnchors = new XElement("aAnchors", new XAttribute("itemType", "CAnchorProps"));
-            propInfo.Add(aAnchors);
-
-            xml.Add(propInfo);
+           
 
             // dlcName Field
 
@@ -1262,7 +1274,7 @@ namespace AkinaRPTool
             Meta meta = XmlMeta.GetMeta(xmldoc);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
 
-            File.WriteAllText(@"C:\Users\TMMarkus\Desktop\test.xml", xmlFile.ToString());
+            File.WriteAllText(@"C:\Users\marc.merino\Desktop\test.xml", xmlFile.ToString());
 
             File.WriteAllBytes(filePath, newYmtBytes);
         }
