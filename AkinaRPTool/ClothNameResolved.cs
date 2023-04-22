@@ -41,8 +41,17 @@ namespace AkinaRPTool
             COUNT
         }
 
+        public enum PropRenderFlag
+        {
+            NONE,
+            PRF_ALPHA,
+            PRF_DECAL,
+            PRF_CUTOUT
+        }
+
         public Type clothType;
         public DrawableType drawableType;
+        public PropRenderFlag propRenderFlag;
         public string bindedNumber = "";
         public string postfix = "";
         public bool isVariation = false;

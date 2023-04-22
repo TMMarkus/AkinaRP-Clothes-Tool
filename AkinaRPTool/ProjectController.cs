@@ -132,23 +132,23 @@ namespace AkinaRPTool
 
                             }
 
+                            nextCloth.SearchForTextures();
+
                             if (cData.clothType == ClothNameResolver.Type.Component)
                             {
-                                nextCloth.SearchForFPModel();
-                                nextCloth.SearchForTextures();
-
-                                UpdateClothesList(nextCloth);
-
+                                nextCloth.SearchForFPModel();                              
                                 StatusController.SetStatus(nextCloth.ToString() + " added (FP model found: " + (nextCloth.fpModelPath != "" ? "Yes" : "No") + ", Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                            }
+
+                            if (nextCloth.textures.Count > 0)
+                            {
+                                UpdateClothesList(nextCloth);
                             }
                             else
                             {
-                                nextCloth.SearchForTextures();
-
-                                UpdateClothesList(nextCloth);
-
-                                StatusController.SetStatus(nextCloth.ToString() + " added, Textures: " + (nextCloth.textures.Count) + "). Total: " + MainWindow.clothes.Count);
+                                MessageBox.Show("You'r tring to import a model without textures. Omitting...", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             }
+                            
 
                             targetSex = Sex.Female;
                         }

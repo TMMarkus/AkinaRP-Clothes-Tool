@@ -205,7 +205,7 @@
 
             </GroupBox>
 
-            <Grid x:Name="clothEditWindow" Visibility="Visible" Grid.Column="1">
+            <Grid x:Name="clothEditWindow" Visibility="Hidden" Grid.Column="1">
                 <GroupBox x:Name="editGroupBox" Header="Drawable edit" >
                     <Grid>
                         <Grid.RowDefinitions>
@@ -248,7 +248,7 @@
                             <Grid Grid.Column="1">
                                 <GroupBox Header="Item Name" FontSize="14" ToolTip="Name of the selected item (Only for aplication)" >
                                     <Grid>
-                                        <TextBox x:Name="drawableName" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}" FontSize="16" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
+                                        <TextBox x:Name="drawableName" PreviewKeyDown="ClearFocusKeyboard" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}" FontSize="16" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
                                     </Grid>
                                 </GroupBox>
                             </Grid>
@@ -318,12 +318,13 @@
                             <Grid Grid.Column="1">
                                 <GroupBox Header="Flags">
                                     <StackPanel Margin="5">
-                                        <CheckBox x:Name="unkFlag1Check" Content="Unknown Flag 1" Checked="UnkFlag1Check_Checked" Unchecked="UnkFlag1Check_Checked"/>
-                                        <CheckBox x:Name="unkFlag2Check" Content="Unknown Flag 2" Checked="UnkFlag2Check_Checked" Unchecked="UnkFlag2Check_Checked"/>
-                                        <CheckBox x:Name="unkFlag3Check" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked" Unchecked="UnkFlag3Check_Checked"/>
-                                        <CheckBox x:Name="unkFlag4Check" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked" Unchecked="UnkFlag4Check_Checked"/>
-                                        <CheckBox x:Name="isHighHeelsCheck" IsEnabled="False" Content="Is High Heels (Dont Work!)" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
-                                        <CheckBox x:Name="isReskinCheck" Content="Skin Tone?" Checked="isReskinCheck_Checked" Unchecked="isReskinCheck_Checked"/>
+                                        <CheckBox x:Name="unkFlag1Check" FontSize="12" Content="Unknown Flag 1" Checked="UnkFlag1Check_Checked" Unchecked="UnkFlag1Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag2Check" FontSize="12" Content="Unknown Flag 2" Checked="UnkFlag2Check_Checked" Unchecked="UnkFlag2Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag3Check" FontSize="12" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked" Unchecked="UnkFlag3Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag4Check" FontSize="12" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked" Unchecked="UnkFlag4Check_Checked"/>
+                                        <CheckBox x:Name="isReskinCheck" FontSize="12" Content="Skin Tone?" Checked="isReskinCheck_Checked" Unchecked="isReskinCheck_Checked"/>
+                                        <CheckBox x:Name="isHighHeelsCheck" FontSize="12" Content="Is High Heels (Dont Work!)" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
+                                        <TextBox x:Name="highHeelsNumberText" Text="1.0" FontSize="14" Margin="0,5,0,0" IsEnabled="False" PreviewKeyDown="NumberValidationTextBox" TextChanged="HihgHeelsNumber_TextChanged" VerticalContentAlignment="Center"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -332,45 +333,63 @@
                 </GroupBox>
             </Grid>
 
-            <!--
-            <Grid x:Name="pedPropEditWindow" Width="Auto" Visibility="Hidden">
-                <GroupBox x:Name="pedPropEditGroupBox" Margin="0" Header="Ped prop edit" >
+
+            <Grid x:Name="pedPropEditWindow" Visibility="Visible" Grid.Column="1">
+                <GroupBox x:Name="pedPropEditGroupBox" Header="Ped prop edit" >
                     <Grid>
-                        <Grid Margin="0,50,0,0">
-                            <GroupBox Header="Textures" Width="400" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <GroupBox Header="Ped prop name">
+                                <TextBox x:Name="pedPropName" TextWrapping="Wrap" BorderBrush="{x:Null}" TextChanged="PedPropName_TextChanged"/>
+                            </GroupBox>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <GroupBox Header="Textures" Grid.Column="0">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    
-                                    <ListBox x:Name="pedPropTexturesList" Grid.Row="0">
 
-                                    </ListBox>
+                                    <ListBox x:Name="pedPropTexturesList" Grid.Row="0" />
+
                                     <Grid VerticalAlignment="Bottom" Grid.Row="1">
-                                        <MenuItem x:Name="pedPropAddTexture" Header="Add" Click="AddTexture_Click"/>
-                                        <MenuItem x:Name="pedPropRemoveTexture" Header="Remove" Click="RemoveTexture_Click"/>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button x:Name="pedPropAddTexture" Content="➕ Add" Click="AddTexture_Click" Grid.Column="0" Padding="10, 1, 10, 1" FontSize="12"/>
+                                        <Button x:Name="pedPropRemoveTexture" Content="❌ Remove" Click="RemoveTexture_Click" Grid.Column="1" Padding="5, 1, 5, 1" FontSize="12"/>
                                     </Grid>
                                 </Grid>
                             </GroupBox>
-                            <GroupBox HorizontalAlignment="Right" Width="160" Header="Flags" Margin="0">
+                            
+                            <GroupBox Header="Flags" Grid.Column="1">
                                 <StackPanel Margin="5">
-                                    <CheckBox x:Name="pedPropFlag1" Content="unkFlag1" Checked="PedPropFlag1_Checked"/>
-                                    <CheckBox x:Name="pedPropFlag2" Content="unkFlag2" Checked="PedPropFlag2_Checked"/>
-                                    <CheckBox x:Name="pedPropFlag3" Content="unkFlag3" Checked="PedPropFlag3_Checked"/>
-                                    <CheckBox x:Name="pedPropFlag4" Content="unkFlag4" Checked="PedPropFlag4_Checked"/>
-                                    <CheckBox x:Name="pedPropFlag5" Content="unkFlag5" Checked="PedPropFlag5_Checked"/>
+                                    <CheckBox x:Name="pedPropFlag1" Content="Unknown Flag 1" Checked="PedPropFlag1_Checked" Unchecked="PedPropFlag1_Checked"/>
+                                    <CheckBox x:Name="pedPropFlag2" Content="Unknown Flag 2" Checked="PedPropFlag2_Checked" Unchecked="PedPropFlag2_Checked"/>
+                                    <CheckBox x:Name="pedPropFlag3" Content="Unknown Flag 3" Checked="PedPropFlag3_Checked" Unchecked="PedPropFlag3_Checked"/>
+                                    <CheckBox x:Name="pedPropFlag4" Content="Unknown Flag 4" Checked="PedPropFlag4_Checked" Unchecked="PedPropFlag4_Checked"/>
+                                    <CheckBox x:Name="pedPropFlag5" Content="Unknown Flag 5" Checked="PedPropFlag5_Checked" Unchecked="PedPropFlag5_Checked"/>
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
-                        <GroupBox Header="Ped prop name" Height="40" Margin="0,0,0,0" Width="200">
-                            <TextBox x:Name="pedPropName" TextWrapping="Wrap" Margin="0" BorderBrush="{x:Null}" TextChanged="PedPropName_TextChanged"/>
-                        </GroupBox>
                     </Grid>
                 </GroupBox>
             </Grid>
-            -->
-
         </Grid>
 
         <Menu Height="20" VerticalAlignment="Top" Grid.RowSpan="2">
