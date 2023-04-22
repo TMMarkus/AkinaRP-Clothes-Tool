@@ -1274,7 +1274,7 @@ namespace AkinaRPTool
             Meta meta = XmlMeta.GetMeta(xmldoc);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
 
-            File.WriteAllText(@"C:\Users\marc.merino\Desktop\test.xml", xmlFile.ToString());
+            //File.WriteAllText(@"C:\Users\TMMarkus\Desktop\test.xml", xmlFile.ToString());
 
             File.WriteAllBytes(filePath, newYmtBytes);
         }
