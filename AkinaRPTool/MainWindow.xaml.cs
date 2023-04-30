@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static AkinaRPTool.ClothData;
-using static System.Net.Mime.MediaTypeNames;
+
+using ProgressBar = System.Windows.Forms.ProgressBar;
 
 namespace AkinaRPTool
 {
@@ -57,21 +58,26 @@ namespace AkinaRPTool
 
     public partial class MainWindow : Window
     {
-        private static TextBlock statusTextBlock = null;
-        private static ProgressBar statusProgress = null;
+        public static TextBlock statusTextBlock = null;
+        public ProgressBar statusBar = null;
+
         public static ObservableCollection<ClothData> clothes;
         public static ObservableCollection<ClothData> maleClothes;
         public static ObservableCollection<ClothData> femaleClothes;
+
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
+
         private static string appVersion = "v0.0.1";
+
+        public static MainWindow Instance { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
             statusTextBlock = ((TextBlock)FindName("currentStatusBar"));
-            statusProgress = ((ProgressBar)FindName("currentProgress"));
+            statusBar = ((ProgressBar)FindName("currentProgress"));
 
             clothes = new ObservableCollection<ClothData>();
             maleClothes = new ObservableCollection<ClothData>();
@@ -109,6 +115,8 @@ namespace AkinaRPTool
 
             WindowMain.Title = appVersion;
 
+            Instance = this;
+
             MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\nhttps://github.com/TMMarkus/AkinaRP-Clothes-Tool\r\n\r\nFor now, only the \"clothing\" part is available, the \"props\" part is not yet developed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
@@ -117,15 +125,6 @@ namespace AkinaRPTool
             statusTextBlock.Text = status;
         }
 
-        public static void SetProgress(double progress)
-        {
-            if (progress > 1)
-                progress = 1;
-            if (progress < 0)
-                progress = 0;
-
-            statusProgress.Value = statusProgress.Maximum * progress;
-        }
 
         private void OpenMenu_Click(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,7 +9,10 @@ namespace AkinaRPTool
     class ProjectController
     {
         static ProjectController singleton = null;
-        static bool WarnShowed = false;
+        static bool areReskin = false;
+        static ArrayList omitedFiles = new ArrayList();
+        static ArrayList propFiles = new ArrayList();
+
         public static ProjectController Instance()
         {
             if (singleton == null)
@@ -21,34 +24,71 @@ namespace AkinaRPTool
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
 
-            WarnShowed = false;
+            areReskin = false;
+            omitedFiles.Clear();
+            propFiles.Clear();
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                string carpeta = folderBrowserDialog.SelectedPath;
-                FolderRecursive(targetSex, carpeta);
-            }
-        }
+                string folder = folderBrowserDialog.SelectedPath;
+                string[] files = Directory.GetFiles(folder, "*.ydd", SearchOption.AllDirectories);
 
-        public void FolderRecursive(Sex targetSex, string filepath)
-        {
-            if (File.Exists(filepath))
-            {
-                return;
-            }
-            else if (Directory.Exists(filepath))
-            {
-                string[] files = Directory.GetFiles(filepath);
-                string[] subDirectories = Directory.GetDirectories(filepath);
+                int totalFiles = files.Length;
+                int currentFiles = 0;
 
-                foreach (string subDirectory in subDirectories)
+                if (targetSex == Sex.All)
                 {
-                    FolderRecursive(targetSex, subDirectory);
+                    totalFiles *= 2;
                 }
 
-                foreach (string filename in files)
+                if (totalFiles > 126)
                 {
-                    ImportPed(filename, targetSex);
+                    var result = MessageBox.Show("More than 126 [" + totalFiles + "] items have been detected.\nIt is not recommended to create a pack with more than 126 items, as this causes clothing selection to not synchronize correctly.\n\nDo you still want to proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                if (files.Length > 0)
+                {
+                    foreach (string filename in files)
+                    {
+                        ImportPed(filename, targetSex);
+
+                        if (targetSex == Sex.All)
+                        {
+                            currentFiles += 2;
+                        }
+                        else
+                        {
+                            currentFiles++;
+                        }
+
+                        MainWindow.Instance.currentProgress.Value = currentFiles * 100 / totalFiles;
+                        MainWindow.Instance.currentProgress.Invalidate();
+                        MainWindow.Instance.currentProgress.Update();
+                    }
+
+                    MainWindow.Instance.currentProgress.Value = 0;
+                    MainWindow.Instance.currentProgress.Invalidate();
+                    MainWindow.Instance.currentProgress.Update();
+
+                    if (areReskin)
+                    {
+                        MessageBox.Show("You have imported some race clothing items, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
+                    if (omitedFiles.Count > 0)
+                    {
+                        MessageBox.Show("Some items you have imported do not have textures, so they have been skipped.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
+                    if (propFiles.Count > 0)
+                    {
+                        MessageBox.Show("You have tried to import items of type \"prop\". These types of items are not yet supported.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -74,13 +114,65 @@ namespace AkinaRPTool
                     break;
             }
 
+            areReskin = false;
+            omitedFiles.Clear();
+            propFiles.Clear();
+
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                WarnShowed = false;
+                int currentFiles = 0;
+                int totalFiles = openFileDialog.FileNames.Length;
+
+                if (targetSex == Sex.All)
+                {
+                    totalFiles *= 2;
+                }
+
+                if (totalFiles > 126)
+                {
+                    var result = MessageBox.Show("More than 126 [" + totalFiles + "] items have been detected.\nIt is not recommended to create a pack with more than 126 items, as this causes clothing selection to not synchronize correctly.\n\nDo you still want to proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
 
                 foreach (string filename in openFileDialog.FileNames)
                 {
                     ImportPed(filename, targetSex);
+
+                    if (targetSex == Sex.All)
+                    {
+                        currentFiles += 2;
+                    }
+                    else
+                    {
+                        currentFiles++;
+                    }
+
+                    MainWindow.Instance.currentProgress.Value = currentFiles * 100 / totalFiles;
+                    MainWindow.Instance.currentProgress.Invalidate();
+                    MainWindow.Instance.currentProgress.Update();
+                }
+
+                MainWindow.Instance.currentProgress.Value = 0;
+                MainWindow.Instance.currentProgress.Invalidate();
+                MainWindow.Instance.currentProgress.Update();
+
+                if (areReskin)
+                {
+                    MessageBox.Show("You have imported some race clothing items, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                if (omitedFiles.Count > 0)
+                {
+                    MessageBox.Show("Some items you have imported do not have textures, so they have been skipped.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                if (propFiles.Count > 0)
+                {
+                    MessageBox.Show("You have tried to import items of type \"prop\". These types of items are not yet supported.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -97,7 +189,7 @@ namespace AkinaRPTool
                 {
                     if (cData.clothType == ClothNameResolver.Type.PedProp)
                     {
-                        MessageBox.Show("You can't import a 'prop' item.\nThis freature isn't yet developed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        propFiles.Add(filename);
                     }
                     else
                     {
@@ -124,12 +216,7 @@ namespace AkinaRPTool
                             {
                                 nextCloth.isReskin = true;
 
-                                if (!WarnShowed)
-                                {
-                                    WarnShowed = true;
-                                    MessageBox.Show("You have imported a race clothing item, so the 'Skin Tone?' option has been activated. This will export the clothing item with the '_r' prefix.\n\nIf it does not display correctly in GTA V, try disabling this option.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                }
-
+                                areReskin = true;
                             }
 
                             nextCloth.SearchForTextures();
@@ -146,7 +233,7 @@ namespace AkinaRPTool
                             }
                             else
                             {
-                                MessageBox.Show("You'r tring to import a model without textures. Omitting...", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                omitedFiles.Add(filename);
                             }
                             
 

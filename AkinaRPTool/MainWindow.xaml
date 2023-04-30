@@ -3,20 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:wfhost="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
         xmlns:local="clr-namespace:AkinaRPTool"
         xmlns:Properties="clr-namespace:AkinaRPTool.Properties" x:Class="AkinaRPTool.MainWindow"
         mc:Ignorable="d"
         x:Name="WindowMain" Icon="icon_alpha.ico">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0*"/>
-            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
-        <ProgressBar x:Name="currentProgress" Height="3" VerticalAlignment="Top" Background="White" BorderBrush="White" Value="0" Margin="0,306,0,0" Grid.RowSpan="2"/>
-        <TextBlock x:Name="currentStatusBar" Height="20" Margin="0,289,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="{x:Null}" Padding="5,0,0,0" Grid.RowSpan="2">
-        </TextBlock>
 
-        <Grid Margin="5,30,5,25" Grid.RowSpan="2" >
+        <Menu VerticalAlignment="Center" Grid.Row="0">
+            <MenuItem Header="Project">
+                <MenuItem Header="New"  Click="NewProjectButton_Click"/>
+                <MenuItem Header="Open" Click="OpenProjectButton_Click"/>
+                <MenuItem Header="Save" Click="SaveProjectButton_Click"/>
+                <MenuItem Header="Build" Click="BuildProjectButton_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1" >
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="350"/>
@@ -349,7 +359,7 @@
                         </Grid>
 
                         <Grid Grid.Row="1">
-                            
+
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="auto" />
@@ -376,7 +386,7 @@
                                     </Grid>
                                 </Grid>
                             </GroupBox>
-                            
+
                             <GroupBox Header="Flags" Grid.Column="1">
                                 <StackPanel Margin="5">
                                     <CheckBox x:Name="pedPropFlag1" Content="Unknown Flag 1" Checked="PedPropFlag1_Checked" Unchecked="PedPropFlag1_Checked"/>
@@ -392,13 +402,15 @@
             </Grid>
         </Grid>
 
-        <Menu Height="20" VerticalAlignment="Top" Grid.RowSpan="2">
-            <MenuItem Header="Project">
-                <MenuItem Header="New"  Click="NewProjectButton_Click"/>
-                <MenuItem Header="Open" Click="OpenProjectButton_Click"/>
-                <MenuItem Header="Save" Click="SaveProjectButton_Click"/>
-                <MenuItem Header="Build" Click="BuildProjectButton_Click"/>
-            </MenuItem>
-        </Menu>
+        <Grid Grid.Row="2">
+            <TextBlock x:Name="currentStatusBar" TextWrapping="Wrap" Padding="5,0,0,0" Background="{x:Null}" />
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <wfhost:WindowsFormsHost>
+                <wf:ProgressBar x:Name="currentProgress" Value="0" Style="Continuous" ForeColor="green" />
+            </wfhost:WindowsFormsHost>
+        </Grid>
+        
     </Grid>
 </Window>

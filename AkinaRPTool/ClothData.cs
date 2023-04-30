@@ -1,10 +1,8 @@
-﻿using CodeWalker.GameFiles;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 
 namespace AkinaRPTool
 {
@@ -157,57 +155,52 @@ namespace AkinaRPTool
         public void SearchForTextures()
         {
             string rootPath = Path.GetDirectoryName(mainPath);
-            string[] files = Directory.GetFiles(rootPath);
+            string[] files = Directory.GetFiles(rootPath, "*.ytd");
 
             textures.Clear();
 
             if (IsComponent())
             {
                 int index = 0;
-                foreach (string file_ in files)
+
+                foreach (string file in files)
                 {
-                    foreach (string file in files)
+                    string drawType = ClothNameResolver.DrawableTypeToString(drawableType).ToLower();
+                    string drawTypeColoquial = drawableType.ToString().ToLower();
+                    string noChange = "_diff_" + origNumerics + "_" + (char)(offsetLetter + index);
+
+                    string tex_uni = drawType + noChange + "_uni.ytd";
+                    string tex_uni_c = drawTypeColoquial + noChange + "_uni.ytd";
+                    string tex_whi = drawType + noChange + "_whi.ytd";
+                    string tex_whi_c = drawTypeColoquial + noChange + "_whi.ytd";
+
+                    string fileLower = file.ToLower();
+
+                    if (fileLower.EndsWith(tex_uni) || fileLower.EndsWith(tex_uni_c) || fileLower.EndsWith(tex_whi) || fileLower.EndsWith(tex_whi_c))
                     {
-                        string drawType = ClothNameResolver.DrawableTypeToString(drawableType).ToLower();
-                        string drawTypeColoquial = drawableType.ToString().ToLower();
-                        string noChange = "_diff_" + origNumerics + "_" + (char)(offsetLetter + index);
-
-                        string tex_uni = drawType + noChange + "_uni.ytd";
-                        string tex_uni_c = drawTypeColoquial + noChange + "_uni.ytd";
-                        string tex_whi = drawType + noChange + "_whi.ytd";
-                        string tex_whi_c = drawTypeColoquial + noChange + "_whi.ytd";
-
-                        string fileLower = file.ToLower();
-
-                        if (fileLower.EndsWith(tex_uni) || fileLower.EndsWith(tex_uni_c) || fileLower.EndsWith(tex_whi) || fileLower.EndsWith(tex_whi_c))
-                        {
-                            textures.Add(file);
-                            index++;
-                        }
+                        textures.Add(file);
+                        index++;
                     }
                 }
             }
             else
             {
                 int index = 0;
-                foreach (string file_ in files)
+                foreach (string file in files)
                 {
-                    foreach (string file in files)
+                    string drawType = ClothNameResolver.DrawableTypeToString(drawableType).ToLower();
+                    string drawTypeColoquial = drawableType.ToString().ToLower();
+                    string noChange = "_diff_" + origNumerics + "_" + (char)(offsetLetter + index);
+
+                    string tex = drawType + noChange + ".ytd";
+                    string tex_c = drawTypeColoquial + noChange + ".ytd";
+
+                    string fileLower = file.ToLower();
+
+                    if (fileLower.EndsWith(tex) || fileLower.EndsWith(tex_c))
                     {
-                        string drawType = ClothNameResolver.DrawableTypeToString(drawableType).ToLower();
-                        string drawTypeColoquial = drawableType.ToString().ToLower();
-                        string noChange = "_diff_" + origNumerics + "_" + (char)(offsetLetter + index);
-
-                        string tex = drawType + noChange + ".ytd";
-                        string tex_c = drawTypeColoquial + noChange + ".ytd";
-
-                        string fileLower = file.ToLower();
-
-                        if (fileLower.EndsWith(tex) || fileLower.EndsWith(tex_c))
-                        {
-                            textures.Add(file);
-                            index++;
-                        }
+                        textures.Add(file);
+                        index++;
                     }
                 }
             }
