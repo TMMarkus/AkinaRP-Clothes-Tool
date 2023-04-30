@@ -1,18 +1,14 @@
 ﻿using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static AkinaRPTool.ClothData;
-using static AkinaRPTool.ClothNameResolver;
-using static System.Net.Mime.MediaTypeNames;
+
+using ProgressBar = System.Windows.Forms.ProgressBar;
 
 namespace AkinaRPTool
 {
@@ -62,21 +58,26 @@ namespace AkinaRPTool
 
     public partial class MainWindow : Window
     {
-        private static TextBlock statusTextBlock = null;
-        private static ProgressBar statusProgress = null;
+        public static TextBlock statusTextBlock = null;
+        public ProgressBar statusBar = null;
+
         public static ObservableCollection<ClothData> clothes;
         public static ObservableCollection<ClothData> maleClothes;
         public static ObservableCollection<ClothData> femaleClothes;
+
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
+
         private static string appVersion = "v0.0.1";
+
+        public static MainWindow Instance { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
             statusTextBlock = ((TextBlock)FindName("currentStatusBar"));
-            statusProgress = ((ProgressBar)FindName("currentProgress"));
+            statusBar = ((ProgressBar)FindName("currentProgress"));
 
             clothes = new ObservableCollection<ClothData>();
             maleClothes = new ObservableCollection<ClothData>();
@@ -104,13 +105,17 @@ namespace AkinaRPTool
 
             editGroupBox.Visibility = Visibility.Hidden;
             clothEditWindow.Visibility = Visibility.Hidden;
-            //pedPropEditWindow.Visibility = Visibility.Hidden;
+            pedPropEditWindow.Visibility = Visibility.Hidden;
 
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
             appVersion = "[Alpha v" + fvi.FileVersion + "] AkinaRP Clothes Tool by TMMarkus";
 
+            highHeelsNumberText.LostFocus += HighHeels_LostFocus;
+
             WindowMain.Title = appVersion;
+
+            Instance = this;
 
             MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\nhttps://github.com/TMMarkus/AkinaRP-Clothes-Tool\r\n\r\nFor now, only the \"clothing\" part is available, the \"props\" part is not yet developed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
@@ -120,15 +125,6 @@ namespace AkinaRPTool
             statusTextBlock.Text = status;
         }
 
-        public static void SetProgress(double progress)
-        {
-            if (progress > 1)
-                progress = 1;
-            if (progress < 0)
-                progress = 0;
-
-            statusProgress.Value = statusProgress.Maximum * progress;
-        }
 
         private void OpenMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -141,7 +137,7 @@ namespace AkinaRPTool
 
         private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
-            ProjectController.Instance().ShowFolderSelection(Sex.All);
+            ProjectController.Instance().AddFolder(Sex.All);
         }
 
         private void AddAllClothes_Click_File(object sender, RoutedEventArgs e)
@@ -151,7 +147,7 @@ namespace AkinaRPTool
 
         private void AddMaleClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
-            ProjectController.Instance().ShowFolderSelection(Sex.Male);
+            ProjectController.Instance().AddFolder(Sex.Male);
         }
 
         private void AddMaleClothes_Click_File(object sender, RoutedEventArgs e)
@@ -161,7 +157,7 @@ namespace AkinaRPTool
 
         private void AddFemaleClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
-            ProjectController.Instance().ShowFolderSelection(Sex.Female);
+            ProjectController.Instance().AddFolder(Sex.Female);
         }
 
         private void AddFemaleClothes_Click_File(object sender, RoutedEventArgs e)
@@ -262,7 +258,7 @@ namespace AkinaRPTool
                 {
                     editGroupBox.Visibility = Visibility.Visible;
                     clothEditWindow.Visibility = Visibility.Hidden;
-                    //pedPropEditWindow.Visibility = Visibility.Hidden;
+                    pedPropEditWindow.Visibility = Visibility.Hidden;
 
                     if (selectedCloth.IsComponent())
                     {
@@ -282,7 +278,7 @@ namespace AkinaRPTool
                     }
                     else
                     {
-                        /*
+                        
                         pedPropEditWindow.Visibility = Visibility.Visible;
                         drawableName.Text = selectedCloth.Name;
                         pedPropName.Text = selectedCloth.Name;
@@ -294,7 +290,7 @@ namespace AkinaRPTool
                         pedPropFlag3.IsChecked = selectedCloth.pedPropFlags.unkFlag3;
                         pedPropFlag4.IsChecked = selectedCloth.pedPropFlags.unkFlag4;
                         pedPropFlag5.IsChecked = selectedCloth.pedPropFlags.unkFlag5;
-                        */
+                        
                     }
 
                     UpdateTypeList();                    
@@ -398,7 +394,7 @@ namespace AkinaRPTool
             selectedCloth = null;
 
             clothEditWindow.Visibility = Visibility.Hidden;
-            //pedPropEditWindow.Visibility = Visibility.Hidden;
+            pedPropEditWindow.Visibility = Visibility.Hidden;
         }
 
         private void OpenProjectButton_Click(object sender, RoutedEventArgs e)
@@ -416,6 +412,8 @@ namespace AkinaRPTool
                     ProjectBuilder.LoadProject(filename);
                 }
             }
+
+            ProjectController.Instance().UpdateClothesList();
         }
 
         private void SaveProjectButton_Click(object sender, RoutedEventArgs e)
@@ -481,8 +479,90 @@ namespace AkinaRPTool
         private void IsHighHeelsCheck_Checked(object sender, RoutedEventArgs e)
         {
             if (selectedCloth != null)
+            {
                 selectedCloth.componentFlags.isHighHeels = isHighHeelsCheck.IsChecked.GetValueOrDefault(false);
+                highHeelsNumberText.IsEnabled = !highHeelsNumberText.IsEnabled;
+            }
         }
+
+        private void HighHeels_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(highHeelsNumberText.Text))
+            {
+                highHeelsNumberText.Text = "0";
+            }
+        }
+
+        private void NumberValidationTextBox(object sender, KeyEventArgs e)
+        {
+            // Permitir sólo números, el punto y la tecla de retroceso.
+            if ((e.Key < Key.D0 || e.Key > Key.D9) && e.Key != Key.Back && e.Key != Key.Decimal && e.Key != Key.OemPeriod)
+            {
+                e.Handled = true;
+            }
+
+            if (e.Key == Key.Enter)
+            {
+                if (string.IsNullOrEmpty(highHeelsNumberText.Text))
+                {
+                    highHeelsNumberText.Text = "0";
+                }
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void ClearFocusKeyboard(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void HihgHeelsNumber_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Obtener el texto actual del TextBox.
+            string text = (sender as TextBox).Text;
+
+            // Validar el formato del número ingresado.
+
+            bool notValid = false;
+
+            if (text.Length >= 1 && !Regex.IsMatch(text[0].ToString(), @"^[0-9]$"))
+            {
+                notValid = true;
+            }
+
+            if (text.Length >= 2 && !Regex.IsMatch(text[1].ToString(), @"^\.$"))
+            {
+                notValid = true;
+            }
+
+            if (text.Length >= 3 && !Regex.IsMatch(text[2].ToString(), @"^[0-9]$"))
+            {
+                notValid = true;
+            }
+
+            if (text.Length > 3)
+            {
+                notValid = true;
+            }
+
+
+            if (notValid)
+            {
+                int caretIndex = (sender as TextBox).CaretIndex;
+                (sender as TextBox).Text = text.Remove(caretIndex - 1, 1);
+                (sender as TextBox).CaretIndex = caretIndex - 1;
+                return;
+            }
+
+            if (selectedCloth != null && double.TryParse(text, out double result))
+            {
+                selectedCloth.highHeelsNumber = result;
+            }
+        }
+
 
         private void isReskinCheck_Checked(object sender, RoutedEventArgs e)
         {
@@ -504,7 +584,7 @@ namespace AkinaRPTool
             fpModelPath.Text = selectedCloth.fpModelPath != "" ? selectedCloth.fpModelPath : "Not selected...";
         }
 
-        /*
+        
         private void PedPropName_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (selectedCloth != null)
@@ -542,7 +622,7 @@ namespace AkinaRPTool
             if (selectedCloth != null)
                 selectedCloth.pedPropFlags.unkFlag5 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
         }
-        */
+        
 
         private void ViewOnlySex_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

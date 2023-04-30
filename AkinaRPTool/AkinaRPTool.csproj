@@ -30,6 +30,9 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CodeWalker.Core">
+      <HintPath>..\libraries\CodeWalker.Core.dll</HintPath>
+    </Reference>
     <Reference Include="RageLib">
       <HintPath>..\libraries\RageLib\RageLib.dll</HintPath>
     </Reference>

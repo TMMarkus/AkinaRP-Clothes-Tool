@@ -10,6 +10,7 @@ namespace AkinaRPTool
     {
         public ClothNameResolver.Type clothType;
         public ClothNameResolver.DrawableType drawableType;
+        public ClothNameResolver.PropRenderFlag propRenderFlag = ClothNameResolver.PropRenderFlag.NONE;
 
         public struct ComponentFlags
         {
@@ -58,6 +59,7 @@ namespace AkinaRPTool
 
         public string name = "";
         public int posi = 0;
+        public double highHeelsNumber = 1;
         public bool isReskin = false;
 
         public string Icon
@@ -152,34 +154,54 @@ namespace AkinaRPTool
 
         public void SearchForTextures()
         {
-            textures.Clear();
             string rootPath = Path.GetDirectoryName(mainPath);
+            string[] files = Directory.GetFiles(rootPath, "*.ytd");
+
+            textures.Clear();
 
             if (IsComponent())
             {
-                for (int i = 0; ; ++i)
+                int index = 0;
+
+                foreach (string file in files)
                 {
-                    string relPath = rootPath + "\\" + ClothNameResolver.DrawableTypeToString(drawableType) + "_diff_" + origNumerics + "_" + (char)(offsetLetter + i) + "_uni.ytd";
-                    if (!File.Exists(relPath))
-                        break;
-                    textures.Add(relPath);
-                }
-                for (int i = 0; ; ++i)
-                {
-                    string relPath = rootPath + "\\" + ClothNameResolver.DrawableTypeToString(drawableType) + "_diff_" + origNumerics + "_" + (char)(offsetLetter + i) + "_whi.ytd";
-                    if (!File.Exists(relPath))
-                        break;
-                    textures.Add(relPath);
+                    string drawType = ClothNameResolver.DrawableTypeToString(drawableType).ToLower();
+                    string drawTypeColoquial = drawableType.ToString().ToLower();
+                    string noChange = "_diff_" + origNumerics + "_" + (char)(offsetLetter + index);
+
+                    string tex_uni = drawType + noChange + "_uni.ytd";
+                    string tex_uni_c = drawTypeColoquial + noChange + "_uni.ytd";
+                    string tex_whi = drawType + noChange + "_whi.ytd";
+                    string tex_whi_c = drawTypeColoquial + noChange + "_whi.ytd";
+
+                    string fileLower = file.ToLower();
+
+                    if (fileLower.EndsWith(tex_uni) || fileLower.EndsWith(tex_uni_c) || fileLower.EndsWith(tex_whi) || fileLower.EndsWith(tex_whi_c))
+                    {
+                        textures.Add(file);
+                        index++;
+                    }
                 }
             }
             else
             {
-                for (int i = 0; ; ++i)
+                int index = 0;
+                foreach (string file in files)
                 {
-                    string relPath = rootPath + "\\" + ClothNameResolver.DrawableTypeToString(drawableType) + "_diff_" + origNumerics + "_" + (char)(offsetLetter + i) + ".ytd";
-                    if (!File.Exists(relPath))
-                        break;
-                    textures.Add(relPath);
+                    string drawType = ClothNameResolver.DrawableTypeToString(drawableType).ToLower();
+                    string drawTypeColoquial = drawableType.ToString().ToLower();
+                    string noChange = "_diff_" + origNumerics + "_" + (char)(offsetLetter + index);
+
+                    string tex = drawType + noChange + ".ytd";
+                    string tex_c = drawTypeColoquial + noChange + ".ytd";
+
+                    string fileLower = file.ToLower();
+
+                    if (fileLower.EndsWith(tex) || fileLower.EndsWith(tex_c))
+                    {
+                        textures.Add(file);
+                        index++;
+                    }
                 }
             }
         }

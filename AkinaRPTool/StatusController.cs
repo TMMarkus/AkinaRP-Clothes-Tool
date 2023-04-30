@@ -7,10 +7,5 @@
         {
             MainWindow.SetStatus(status);
         }
-
-        public static void SetProgress(double progress)
-        {
-            MainWindow.SetProgress(progress);
-        }
     }
 }
