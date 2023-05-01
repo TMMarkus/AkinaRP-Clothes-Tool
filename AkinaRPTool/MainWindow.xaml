@@ -333,7 +333,7 @@
                                         <CheckBox x:Name="unkFlag3Check" FontSize="12" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked" Unchecked="UnkFlag3Check_Checked"/>
                                         <CheckBox x:Name="unkFlag4Check" FontSize="12" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked" Unchecked="UnkFlag4Check_Checked"/>
                                         <CheckBox x:Name="isReskinCheck" FontSize="12" Content="Skin Tone?" Checked="isReskinCheck_Checked" Unchecked="isReskinCheck_Checked"/>
-                                        <CheckBox x:Name="isHighHeelsCheck" FontSize="12" Content="Is High Heels (Dont Work!)" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
+                                        <CheckBox x:Name="isHighHeelsCheck" FontSize="12" IsEnabled="False" Content="Is High Heels (Comming Soon...)" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
                                         <TextBox x:Name="highHeelsNumberText" Text="1.0" FontSize="14" Margin="0,5,0,0" IsEnabled="False" PreviewKeyDown="NumberValidationTextBox" TextChanged="HihgHeelsNumber_TextChanged" VerticalContentAlignment="Center"/>
                                     </StackPanel>
                                 </GroupBox>
