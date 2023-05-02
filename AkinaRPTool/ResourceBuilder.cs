@@ -1033,7 +1033,7 @@ namespace AkinaRPTool
 
                         byte componentTypeID = item.GetComponentTypeID();
 
-                        int _propMask = 17;
+                        int _propMask = 1;
 
                         switch (componentTypeID)
                         {
@@ -1043,13 +1043,8 @@ namespace AkinaRPTool
                             case 5:
                             case 8:
                                 _propMask = 65; break;
-                            case 6:
-                            case 9:
-                                _propMask = 1; break;
                             case 10:
                                 _propMask = 5; break;
-                            case 11:
-                                _propMask = 1; break;
                             default:
                                 break;
                         }
@@ -1110,15 +1105,17 @@ namespace AkinaRPTool
             {
                 XElement compInfoItem = new XElement("Item");
 
+                string compType = "PV_COMP_" + cloth.GetPrefix().ToUpper();
+
                 compInfoItem.Add(new XElement("hash_2FD08CEF", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_FC507D28", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));  //component expressionMods (?) - gives ability to do heels
                 compInfoItem.Add(new XElement("flags", new XAttribute("value", 0))); //not sure what it does
                 compInfoItem.Add(new XElement("inclusions", "0")); //not sure what it does
                 compInfoItem.Add(new XElement("exclusions", "0")); //not sure what it does
-                compInfoItem.Add(new XElement("hash_6032815C", "PV_COMP_HEAD")); //probably everything has PV_COMP_HEAD (?)
+                compInfoItem.Add(new XElement("hash_6032815C", compType)); //component type PV_COMP_ + Type
                 compInfoItem.Add(new XElement("hash_7E103C8B", new XAttribute("value", 0))); //not sure what it does
-                compInfoItem.Add(new XElement("hash_D12F579D", new XAttribute("value", (int) cloth.drawableType))); //component id (jbib = 11, lowr = 4, etc)
+                compInfoItem.Add(new XElement("hash_D12F579D", new XAttribute("value", cloth.GetComponentTypeID()))); //component id (jbib = 11, lowr = 4, etc)
                 compInfoItem.Add(new XElement("hash_FA1F27BF", new XAttribute("value", cloth.posi))); // drawable index (000, 001, 002 etc)
 
                 compInfo.Add(compInfoItem);
