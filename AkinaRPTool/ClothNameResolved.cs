@@ -59,7 +59,7 @@ namespace AkinaRPTool
         {
             string[] parts = Path.GetFileNameWithoutExtension(filename).Split('_');
             if (parts.Length < 3)
-                throw new Exception("Wrong drawable name");
+                throw new Exception("Wrong drawable name on " + filename);
 
             if (parts[0].ToLower() == "p")
             {

@@ -814,17 +814,17 @@ namespace AkinaRPTool
                 int[] propIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 string prefixes = "";
-                string folderNames = "";
+                //string folderNames = "";
 
                 if (newTargetSex == Sex.Male)
                 {
                     prefixes = "mp_m_";
-                    folderNames = "ped_male";
+                    //folderNames = "ped_male";
                 }
                 else if (newTargetSex == Sex.Female)
                 {
                     prefixes = "mp_f_";
-                    folderNames = "ped_female";
+                    //folderNames = "ped_female";
                 }
 
                 bool isAnyClothAdded = false;
@@ -1105,7 +1105,7 @@ namespace AkinaRPTool
             {
                 XElement compInfoItem = new XElement("Item");
 
-                string compType = "PV_COMP_" + cloth.GetPrefix().ToUpper();
+                //string compType = "PV_COMP_" + cloth.GetPrefix().ToUpper(); // Algun dia se utilizara pero hoy no
 
                 compInfoItem.Add(new XElement("hash_2FD08CEF", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_FC507D28", "none")); //not sure what it does
@@ -1113,7 +1113,7 @@ namespace AkinaRPTool
                 compInfoItem.Add(new XElement("flags", new XAttribute("value", 0))); //not sure what it does
                 compInfoItem.Add(new XElement("inclusions", "0")); //not sure what it does
                 compInfoItem.Add(new XElement("exclusions", "0")); //not sure what it does
-                compInfoItem.Add(new XElement("hash_6032815C", compType)); //component type PV_COMP_ + Type
+                compInfoItem.Add(new XElement("hash_6032815C", "PV_COMP_HEAD")); //No tengo ni puta idea para que sirbe
                 compInfoItem.Add(new XElement("hash_7E103C8B", new XAttribute("value", 0))); //not sure what it does
                 compInfoItem.Add(new XElement("hash_D12F579D", new XAttribute("value", cloth.GetComponentTypeID()))); //component id (jbib = 11, lowr = 4, etc)
                 compInfoItem.Add(new XElement("hash_FA1F27BF", new XAttribute("value", cloth.posi))); // drawable index (000, 001, 002 etc)

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static AkinaRPTool.ClothData;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AkinaRPTool
 {
@@ -234,8 +235,8 @@ namespace AkinaRPTool
                             else
                             {
                                 omitedFiles.Add(filename);
-                            }
-                            
+                                MessageBox.Show("This file don't have textures:\n" + filename, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }  
 
                             targetSex = Sex.Female;
                         }
