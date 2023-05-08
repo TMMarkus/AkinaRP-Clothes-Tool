@@ -188,12 +188,6 @@ namespace AkinaRPTool
 
                 if (!cData.isVariation)
                 {
-                    if (cData.clothType == ClothNameResolver.Type.PedProp)
-                    {
-                        propFiles.Add(filename);
-                    }
-                    else
-                    {
                         int loops = 1;
 
                         if (targetSex == Sex.All)
@@ -242,7 +236,7 @@ namespace AkinaRPTool
                         }
 
                         StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
-                    }
+                    
                 }
                 else
                 {

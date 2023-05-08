@@ -256,14 +256,14 @@
                             </Grid>
 
                             <Grid Grid.Column="1">
-                                <GroupBox Header="Item Name" FontSize="14" ToolTip="Name of the selected item (Only for aplication)" >
+                                <GroupBox x:Name="headerDrawableName" Header="Item Name" FontSize="14" ToolTip="Name of the selected item (Only for aplication)" >
                                     <Grid>
                                         <TextBox x:Name="drawableName" PreviewKeyDown="ClearFocusKeyboard" TextChanged="DrawableName_TextChanged" BorderBrush="{x:Null}" FontSize="16" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
                                     </Grid>
                                 </GroupBox>
                             </Grid>
 
-                            <Grid Grid.Column="2">
+                            <Grid Grid.Column="2" x:Name="FPSHeader">
                                 <GroupBox Header="First Person Model" FontSize="14" ToolTip="FPS model">
                                     <Grid>
                                         <TextBox x:Name="fpModelPath" Margin="0, 0, 100, 0" Text="Not selected..." FontSize="16" Background="Transparent" BorderBrush="{x:Null}" IsEnabled="False" IsUndoEnabled="False" IsReadOnly="True" MaxLines="1"/>
@@ -281,7 +281,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="0">
-                                <GroupBox Header="Type" IsEnabled="false" ToolTip="Type of the item (Component, PropPed)">
+                                <GroupBox Header="Type" ToolTip="Type of the item (Component, PropPed)">
                                     <Grid>
                                         <ComboBox x:Name="itemType" SelectionChanged="Type_SelectionChanged" />
                                     </Grid>
@@ -332,6 +332,7 @@
                                         <CheckBox x:Name="unkFlag2Check" FontSize="12" Content="Unknown Flag 2" Checked="UnkFlag2Check_Checked" Unchecked="UnkFlag2Check_Checked"/>
                                         <CheckBox x:Name="unkFlag3Check" FontSize="12" Content="Unknown Flag 3" Checked="UnkFlag3Check_Checked" Unchecked="UnkFlag3Check_Checked"/>
                                         <CheckBox x:Name="unkFlag4Check" FontSize="12" Content="Unknown Flag 4" Checked="UnkFlag4Check_Checked" Unchecked="UnkFlag4Check_Checked"/>
+                                        <CheckBox x:Name="unkFlag5Check" Visibility="Hidden" FontSize="12" Content="Unknown Flag 5" Checked="UnkFlag5Check_Checked" Unchecked="UnkFlag5Check_Checked"/>
                                         <CheckBox x:Name="isReskinCheck" FontSize="12" Content="Skin Tone?" Checked="isReskinCheck_Checked" Unchecked="isReskinCheck_Checked"/>
                                         <CheckBox x:Name="isHighHeelsCheck" FontSize="12" IsEnabled="False" Content="Is High Heels (Comming Soon...)" Checked="IsHighHeelsCheck_Checked" Unchecked="IsHighHeelsCheck_Checked"/>
                                         <TextBox x:Name="highHeelsNumberText" Text="1.0" FontSize="14" Margin="0,5,0,0" IsEnabled="False" PreviewKeyDown="NumberValidationTextBox" TextChanged="HihgHeelsNumber_TextChanged" VerticalContentAlignment="Center"/>
@@ -343,7 +344,7 @@
                 </GroupBox>
             </Grid>
 
-
+            <!--
             <Grid x:Name="pedPropEditWindow" Visibility="Visible" Grid.Column="1">
                 <GroupBox x:Name="pedPropEditGroupBox" Header="Ped prop edit" >
                     <Grid>
@@ -400,6 +401,9 @@
                     </Grid>
                 </GroupBox>
             </Grid>
+        
+            -->
+        
         </Grid>
 
         <Grid Grid.Row="2">
