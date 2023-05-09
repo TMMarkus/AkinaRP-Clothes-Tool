@@ -84,64 +84,7 @@
 
                     <Grid Grid.Row="2">
 
-                        <DataGrid x:Name="listsItems">
-                        </DataGrid>
-
                         <ListBox x:Name="allListBox" Visibility="Visible" BorderBrush="Black" SelectionChanged="ClothesListBox_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ShowGridLines="False">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20" />
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Text="{Binding Posi}"
-                                               Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Icon}"
-                                               Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Type}"
-                                               Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Category}"
-                                               Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Name}"
-                                               Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-
-                        <ListBox x:Name="maleListBox" Visibility="Visible" BorderBrush="Black" SelectionChanged="ClothesListBox_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ShowGridLines="False">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20" />
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition Width="25" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Text="{Binding Posi}"
-                                               Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Icon}"
-                                               Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Type}"
-                                               Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Category}"
-                                               Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding Name}"
-                                               Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-
-                        <ListBox x:Name="femaleListBox" Visibility="Visible" BorderBrush="Black" SelectionChanged="ClothesListBox_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid ShowGridLines="False">

@@ -305,25 +305,12 @@ namespace AkinaRPTool
             _clothes = _clothes.OrderBy(x => x.posi).ToList();
 
             MainWindow.clothes.Clear();
-            MainWindow.maleClothes.Clear();
-            MainWindow.femaleClothes.Clear();
 
             foreach (var cloth in _clothes)
             {
                 MainWindow.clothes.Add(cloth);
             }
 
-            foreach (var cloth in MainWindow.clothes)
-            {
-                if (cloth.targetSex == Sex.Male)
-                {
-                    MainWindow.maleClothes.Add(cloth);
-                }
-                else if (cloth.targetSex == Sex.Female)
-                {
-                    MainWindow.femaleClothes.Add(cloth);
-                }
-            }
         }
     }
 }

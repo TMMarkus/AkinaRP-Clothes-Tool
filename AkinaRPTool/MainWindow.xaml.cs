@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 //using System.Windows.Forms;
 using System.Windows.Input;
 using static AkinaRPTool.ClothData;
@@ -63,8 +64,6 @@ namespace AkinaRPTool
         public ProgressBar statusBar = null;
 
         public static ObservableCollection<ClothData> clothes;
-        public static ObservableCollection<ClothData> maleClothes;
-        public static ObservableCollection<ClothData> femaleClothes;
 
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
@@ -73,6 +72,7 @@ namespace AkinaRPTool
 
         public static MainWindow Instance { get; private set; }
 
+        private static ListCollectionView clothesList;
         bool updating = false;
 
         public MainWindow()
@@ -83,32 +83,12 @@ namespace AkinaRPTool
             statusBar = ((ProgressBar)FindName("currentProgress"));
 
             clothes = new ObservableCollection<ClothData>();
-            maleClothes = new ObservableCollection<ClothData>();
-            femaleClothes = new ObservableCollection<ClothData>();
+            clothesList = new ListCollectionView(clothes);
 
-            foreach (var cloth in clothes)
-            {
-                if (cloth.targetSex == Sex.Male)
-                {
-                    maleClothes.Add(cloth);
-                }
-                else if (cloth.targetSex == Sex.Female)
-                {
-                    femaleClothes.Add(cloth);
-                }
-            }
-
-            allListBox.ItemsSource = clothes;
-            maleListBox.ItemsSource = maleClothes;
-            femaleListBox.ItemsSource = femaleClothes;
-
-            allListBox.Visibility = Visibility.Visible;
-            maleListBox.Visibility = Visibility.Hidden;
-            femaleListBox.Visibility = Visibility.Hidden;
+            allListBox.ItemsSource = clothesList;
 
             editGroupBox.Visibility = Visibility.Hidden;
             clothEditWindow.Visibility = Visibility.Hidden;
-            //pedPropEditWindow.Visibility = Visibility.Hidden;
 
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -175,26 +155,12 @@ namespace AkinaRPTool
                 var _clothes = clothes.OrderBy(x => x.posi).ToList();
 
                 clothes.Clear();
-                maleClothes.Clear();
-                femaleClothes.Clear();
 
                 foreach (var cloth in _clothes)
                 {
                     if (cloth != selectedCloth)
                     {
                         clothes.Add(cloth);
-                    }
-                }
-
-                foreach (var cloth in clothes)
-                {
-                    if (cloth.targetSex == Sex.Male)
-                    {
-                        maleClothes.Add(cloth);
-                    }
-                    else if (cloth.targetSex == Sex.Female)
-                    {
-                        femaleClothes.Add(cloth);
                     }
                 }
 
@@ -253,9 +219,9 @@ namespace AkinaRPTool
 
         private void ClothesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0 && !updating)
+            if (allListBox.Items.Count > 0 && !updating)
             {
-                selectedCloth = (ClothData)e.AddedItems[0];
+                selectedCloth = (ClothData)allListBox.SelectedItem;
                 UpdateWindows();
             }
         }
@@ -267,8 +233,7 @@ namespace AkinaRPTool
                 updating = true;
                 editGroupBox.Visibility = Visibility.Visible;
                 clothEditWindow.Visibility = Visibility.Visible;
-                unkFlag5Check.Visibility = Visibility.Hidden;
-                //pedPropEditWindow.Visibility = Visibility.Hidden;
+                unkFlag5Check.Visibility = Visibility.Collapsed;
 
                 UpdateTypeList();
 
@@ -300,9 +265,6 @@ namespace AkinaRPTool
                 {
                     editGroupBox.Header = "Ped Prop Edit";
                     headerDrawableName.Header = "Ped Prop Name";
-
-                    //pedPropEditWindow.Visibility = Visibility.Visible;
-                    //pedPropName.Text = selectedCloth.Name;
 
                     drawableName.Text = selectedCloth.Name;
 
@@ -416,13 +378,10 @@ namespace AkinaRPTool
         private void NewProjectButton_Click(object sender, RoutedEventArgs e)
         {
             clothes.Clear();
-            maleClothes.Clear();
-            femaleClothes.Clear();
 
             selectedCloth = null;
 
             clothEditWindow.Visibility = Visibility.Hidden;
-            //pedPropEditWindow.Visibility = Visibility.Hidden;
         }
 
         private void OpenProjectButton_Click(object sender, RoutedEventArgs e)
@@ -680,26 +639,27 @@ namespace AkinaRPTool
 
         private void ViewOnlySex_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (listsItems == null) return;
+            if (allListBox == null) return;
 
             ComboBox cmb = sender as ComboBox;
 
-            allListBox.Visibility = Visibility.Hidden;
-            maleListBox.Visibility = Visibility.Hidden;
-            femaleListBox.Visibility = Visibility.Hidden;
 
             if (cmb.SelectedIndex == 0)
             {
-                allListBox.Visibility = Visibility.Visible;
+                clothesList.Filter = null;
             }
             else if (cmb.SelectedIndex == 1)
             {
-                maleListBox.Visibility = Visibility.Visible;
+                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Male;
             }
             else if (cmb.SelectedIndex == 2)
             {
-                femaleListBox.Visibility = Visibility.Visible;
+                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Female;
             }
+
+            clothesList.Refresh();
+
+
         }
 
         private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
