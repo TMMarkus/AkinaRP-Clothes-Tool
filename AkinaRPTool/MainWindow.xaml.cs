@@ -95,7 +95,7 @@ namespace AkinaRPTool
 
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            appVersion = "[Alpha v" + fvi.FileVersion + "] AkinaRP Clothes Tool by TMMarkus";
+            appVersion = "[Beta v" + fvi.FileVersion + "] AkinaRP Clothes Tool by TMMarkus";
 
             highHeelsNumberText.LostFocus += HighHeels_LostFocus;
 
