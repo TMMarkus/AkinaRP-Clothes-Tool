@@ -310,7 +310,6 @@ namespace AkinaRPTool
             {
                 MainWindow.clothes.Add(cloth);
             }
-
         }
     }
 }

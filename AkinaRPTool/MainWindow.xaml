@@ -110,8 +110,8 @@
 
                                         <Grid.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="Import folder..." Click="AddMaleClothes_Click_Folder" />
-                                                <MenuItem Header="Import file..." Click="AddMaleClothes_Click_File" />
+                                                <MenuItem Header="📁 Show in File Explorer" Click="ShowFileBrowser" />
+                                                <MenuItem Header="🗑️ Remove" Click="RemoveUnderCursor_Click" />
                                             </ContextMenu>
                                         </Grid.ContextMenu>
                                     
@@ -133,8 +133,8 @@
                         <Button x:Name="addAllClothes" Content="⚥ All" Click="OpenMenu_Click" Grid.Column="0" FontSize="12">
                             <Button.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Import folder..." Click="AddAllClothes_Click_Folder" />
-                                    <MenuItem Header="Import file..." Click="AddAllClothes_Click_File" />
+                                    <MenuItem Header="📁 Import folder..." Click="AddAllClothes_Click_Folder" />
+                                    <MenuItem Header="📝 Import file..." Click="AddAllClothes_Click_File" />
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -144,8 +144,8 @@
                         <Button x:Name="addMaleClothes" Content="♂ Male" Click="OpenMenu_Click" Grid.Column="1" FontSize="12">
                             <Button.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Import folder..." Click="AddMaleClothes_Click_Folder" />
-                                    <MenuItem Header="Import file..." Click="AddMaleClothes_Click_File" />
+                                    <MenuItem Header="📁 Import folder..." Click="AddMaleClothes_Click_Folder" />
+                                    <MenuItem Header="📝 Import file..." Click="AddMaleClothes_Click_File" />
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -154,8 +154,8 @@
                         <Button x:Name="addFemaleClothes" Content="♀ Female" Click="OpenMenu_Click" Grid.Column="2" FontSize="12">
                             <Button.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Import folder..." Click="AddFemaleClothes_Click_Folder" />
-                                    <MenuItem Header="Import file..." Click="AddFemaleClothes_Click_File" />
+                                    <MenuItem Header="📁 Import folder..." Click="AddFemaleClothes_Click_Folder" />
+                                    <MenuItem Header="📝 Import file..." Click="AddFemaleClothes_Click_File" />
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>

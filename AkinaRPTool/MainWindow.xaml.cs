@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -11,13 +12,15 @@ using System.Windows.Input;
 using static AkinaRPTool.ClothData;
 
 using ProgressBar = System.Windows.Forms.ProgressBar;
+using System.Diagnostics;
+using System.Windows.Shapes;
 
 namespace AkinaRPTool
 {
     public class ComboTypeItem : object
     {
         protected string m_Name;
-		protected ClothNameResolver.Type m_Value;
+        protected ClothNameResolver.Type m_Value;
 
         public ComboTypeItem(string name, ClothNameResolver.Type in_value)
         {
@@ -91,7 +94,7 @@ namespace AkinaRPTool
             clothEditWindow.Visibility = Visibility.Hidden;
 
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             appVersion = "[Alpha v" + fvi.FileVersion + "] AkinaRP Clothes Tool by TMMarkus";
 
             highHeelsNumberText.LostFocus += HighHeels_LostFocus;
@@ -100,7 +103,8 @@ namespace AkinaRPTool
 
             Instance = this;
 
-            MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\nhttps://github.com/TMMarkus/AkinaRP-Clothes-Tool\r\n\r\nFor now, only the \"clothing\" part is available, the \"props\" part is not yet developed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\n" +
+                "https://github.com/TMMarkus/AkinaRP-Clothes-Tool", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         public static void SetStatus(string status)
@@ -126,6 +130,46 @@ namespace AkinaRPTool
             boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
             boton.ContextMenu.IsOpen = true;
         }
+
+        private void ShowFileBrowser(object sender, RoutedEventArgs e)
+        {
+            if (selectedCloth == null) return;
+
+            string folderPath = System.IO.Path.GetDirectoryName(selectedCloth.mainPath);
+
+            if (Directory.Exists(folderPath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = folderPath,
+                    FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show(string.Format("{0} Directory does not exist!", folderPath));
+            }
+        }
+
+        private void UpdateSelection()
+        {
+            ClothData temp = selectedCloth;
+
+            selectedCloth = null;
+
+            foreach (var cloth in allListBox.Items)
+            {
+                if ((ClothData)cloth == temp)
+                {
+                    selectedCloth = temp;
+                    allListBox.SelectedItem = cloth;
+                    break;
+                }
+            }
+        }
+        
 
         private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
@@ -242,7 +286,6 @@ namespace AkinaRPTool
                 updating = true;
                 editGroupBox.Visibility = Visibility.Visible;
                 clothEditWindow.Visibility = Visibility.Visible;
-                unkFlag5Check.Visibility = Visibility.Collapsed;
 
                 UpdateTypeList();
 
@@ -269,6 +312,7 @@ namespace AkinaRPTool
                     isReskinCheck.Visibility = Visibility.Visible;
                     FPSHeader.Visibility = Visibility.Visible;
                     highHeelsNumberText.Visibility = Visibility.Visible;
+                    unkFlag5Check.Visibility = Visibility.Hidden;
                 }
                 else
                 {
@@ -293,6 +337,9 @@ namespace AkinaRPTool
                     FPSHeader.Visibility = Visibility.Hidden;
                     highHeelsNumberText.Visibility = Visibility.Hidden;
                 }
+
+                UpdateSelection();
+
                 updating = false;
             }
         }
@@ -303,14 +350,7 @@ namespace AkinaRPTool
 
             foreach (ClothNameResolver.Type typ in Enum.GetValues(typeof(ClothNameResolver.Type)))
             {
-                if (typ == ClothNameResolver.Type.PedProp)
-                {
-                    itemType.Items.Add(new ComboTypeItem(typ.ToString(), typ));
-                }
-                else
-                {
-                    itemType.Items.Add(new ComboTypeItem(typ.ToString(), typ));
-                }
+                itemType.Items.Add(new ComboTypeItem(typ.ToString(), typ));
             }
 
             bool found = false;
@@ -371,8 +411,11 @@ namespace AkinaRPTool
             }
 
             if (!found)
-            {
+            { 
                 itemCategory.SelectedIndex = 0;
+
+                ComboCategoryItem temp_ = (ComboCategoryItem)itemCategory.SelectedItem;
+                selectedCloth.drawableType = temp_.GetValue();
             }
         }
 
@@ -667,8 +710,6 @@ namespace AkinaRPTool
             }
 
             clothesList.Refresh();
-
-
         }
 
         private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -681,8 +722,9 @@ namespace AkinaRPTool
             if (targeType == null) return;
 
             selectedCloth.clothType = targeType.GetValue();
-            
+
             ProjectController.Instance().UpdateClothesList();
+            
             UpdateWindows();
         }
 
@@ -696,7 +738,10 @@ namespace AkinaRPTool
             if (targeCategory == null) return;
 
             selectedCloth.drawableType = targeCategory.GetValue();
+
             ProjectController.Instance().UpdateClothesList();
+
+            UpdateWindows();
         }
     }
 }
