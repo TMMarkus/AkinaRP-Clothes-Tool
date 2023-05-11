@@ -118,6 +118,15 @@ namespace AkinaRPTool
             boton.ContextMenu.IsOpen = true;
         }
 
+        private void OpenMenuGrid_Click(object sender, RoutedEventArgs e)
+        {
+            // Mostrar el menú en la posición del cursor del mouse
+            Grid boton = (Grid)sender;
+            boton.ContextMenu.PlacementTarget = boton;
+            boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            boton.ContextMenu.IsOpen = true;
+        }
+
         private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
             ProjectController.Instance().AddFolder(Sex.All);
@@ -664,7 +673,7 @@ namespace AkinaRPTool
 
         private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (itemType == null || selectedCloth == null) return;
+            if (itemType == null || selectedCloth == null || updating) return;
 
             ComboBox cmb = sender as ComboBox;
             ComboTypeItem targeType = cmb.SelectedItem as ComboTypeItem;
@@ -679,7 +688,7 @@ namespace AkinaRPTool
 
         private void Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (itemCategory == null || selectedCloth == null) return;
+            if (itemCategory == null || selectedCloth == null || updating) return;
 
             ComboBox cmb = sender as ComboBox;
             ComboCategoryItem targeCategory = cmb.SelectedItem as ComboCategoryItem;
