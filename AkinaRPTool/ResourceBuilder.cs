@@ -814,17 +814,17 @@ namespace AkinaRPTool
                 int[] propIndexes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 string prefixes = "";
-                string folderNames = "";
+                //string folderNames = "";
 
                 if (newTargetSex == Sex.Male)
                 {
                     prefixes = "mp_m_";
-                    folderNames = "ped_male";
+                    //folderNames = "ped_male";
                 }
                 else if (newTargetSex == Sex.Female)
                 {
                     prefixes = "mp_f_";
-                    folderNames = "ped_female";
+                    //folderNames = "ped_female";
                 }
 
                 bool isAnyClothAdded = false;
@@ -874,24 +874,26 @@ namespace AkinaRPTool
                     }
                     else
                     {
-                        /* PROPS SYSTEM
+
                         Unk_2834549053 anchor = (Unk_2834549053)cd.GetPedPropTypeID();
 
                         if (cd.textures.Count > 0 && (int)cd.targetSex == sexNr)
                         {
-                            YmtPedDefinitionFile targetYmt = ymt;
+                            //YmtPedDefinitionFile targetYmt = ymt;
 
-                            var defs = ymt.Unk_376833625.PropInfo.Props[anchor] ?? new List<MUnk_94549140>();
-                            var item = new MUnk_94549140(ymt.Unk_376833625.PropInfo);
+                            //var defs = ymt.Unk_376833625.PropInfo.Props[anchor] ?? new List<MUnk_94549140>();
+                            //var item = new MUnk_94549140(ymt.Unk_376833625.PropInfo);
 
-                            item.AnchorId = (byte)anchor;
+                            //item.AnchorId = (byte)anchor;
 
+                            /*
                             for (int i = 0; i < cd.textures.Count; i++)
                             {
                                 var texture = new MUnk_254518642();
                                 texture.TexId = (byte)i;
                                 item.TexData.Add(texture);
                             }
+                            
 
                             // Get or create linked anchor
                             var aanchor = ymt.Unk_376833625.PropInfo.AAnchors.Find(e => e.Anchor == anchor);
@@ -913,6 +915,7 @@ namespace AkinaRPTool
                             }
 
                             defs.Add(item);
+                            */
 
                             if (!isAnyPropAdded)
                             {
@@ -934,14 +937,14 @@ namespace AkinaRPTool
                                 File.Copy(cd.textures[i], outputFolder + "\\stream\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "\\" + prefixes + "freemode_01_p_" + prefixes + collectionName + "^" + prefix + "_diff_" + componentNumerics + "_" + (char)(offsetLetter + i) + ".ytd", true);
                             }
                         }
-                        */
+
                     }
                 }
 
                 if (isAnyClothAdded || isAnyPropAdded)
                 {
-                    string filePath = outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".ymt";
-                    GenerateYMT(filePath, collectionName, newTargetSex);
+                    string YMTfilePath = outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".ymt";
+                    GenerateYMT(outputFolder, YMTfilePath, collectionName, newTargetSex);
                     File.WriteAllText(outputFolder + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".meta", GenerateShopMeta(newTargetSex, collectionName));
                     resourceLUAMetas.Add(prefixes + "freemode_01_" + prefixes + collectionName + ".meta");
                 }
@@ -961,7 +964,7 @@ namespace AkinaRPTool
 
             foreach (ClothNameResolver.DrawableType avComp in Enum.GetValues(typeof(ClothNameResolver.DrawableType)))
             {
-                if(MainWindow.clothes.Any(i => i.drawableType == avComp))
+                if(MainWindow.clothes.Any(i => i.drawableType == avComp) && avComp <= DrawableType.Head)
                 {
                     genAvailComp[((int)avComp)] = 0;
                     compCount++;
@@ -1033,7 +1036,7 @@ namespace AkinaRPTool
 
                         byte componentTypeID = item.GetComponentTypeID();
 
-                        int _propMask = 17;
+                        int _propMask = 1;
 
                         switch (componentTypeID)
                         {
@@ -1043,13 +1046,8 @@ namespace AkinaRPTool
                             case 5:
                             case 8:
                                 _propMask = 65; break;
-                            case 6:
-                            case 9:
-                                _propMask = 1; break;
                             case 10:
                                 _propMask = 5; break;
-                            case 11:
-                                _propMask = 1; break;
                             default:
                                 break;
                         }
@@ -1110,15 +1108,17 @@ namespace AkinaRPTool
             {
                 XElement compInfoItem = new XElement("Item");
 
+                //string compType = "PV_COMP_" + cloth.GetPrefix().ToUpper(); // Algun dia se utilizara pero hoy no
+
                 compInfoItem.Add(new XElement("hash_2FD08CEF", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_FC507D28", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));  //component expressionMods (?) - gives ability to do heels
                 compInfoItem.Add(new XElement("flags", new XAttribute("value", 0))); //not sure what it does
                 compInfoItem.Add(new XElement("inclusions", "0")); //not sure what it does
                 compInfoItem.Add(new XElement("exclusions", "0")); //not sure what it does
-                compInfoItem.Add(new XElement("hash_6032815C", "PV_COMP_HEAD")); //probably everything has PV_COMP_HEAD (?)
+                compInfoItem.Add(new XElement("hash_6032815C", "PV_COMP_HEAD")); //No tengo ni puta idea para que sirbe
                 compInfoItem.Add(new XElement("hash_7E103C8B", new XAttribute("value", 0))); //not sure what it does
-                compInfoItem.Add(new XElement("hash_D12F579D", new XAttribute("value", (int) cloth.drawableType))); //component id (jbib = 11, lowr = 4, etc)
+                compInfoItem.Add(new XElement("hash_D12F579D", new XAttribute("value", cloth.GetComponentTypeID()))); //component id (jbib = 11, lowr = 4, etc)
                 compInfoItem.Add(new XElement("hash_FA1F27BF", new XAttribute("value", cloth.posi))); // drawable index (000, 001, 002 etc)
 
                 compInfo.Add(compInfoItem);
@@ -1215,18 +1215,7 @@ namespace AkinaRPTool
                 aAnchorsItem.Add(new XElement("props", String.Join(" ", props_tex_count)));
 
                 // REVISAR PORQUE CREO QUE ME LO ACABO DE INVENTAR
-                if (prop.mainPath.EndsWith("L"))
-                {
-                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR_LEFT_L"));
-                }
-                else if (prop.mainPath.EndsWith("R"))
-                {
-                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR_RIGHT_L"));
-                }
-                else
-                {
-                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR"));
-                }
+                aAnchorsItem.Add(new XElement("anchor", "ANCHOR_" + ClothNameResolver.PropTypeToString(prop.drawableType).ToUpper()));
 
                 aAnchors.Add(aAnchorsItem);
             }
@@ -1262,10 +1251,10 @@ namespace AkinaRPTool
             return xml;
             // END OF FILE || END -> CPedVariationInfo
         }
-        public static void GenerateYMT(string filePath, string collectionName, Sex targetSex)
+        public static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
         {
-            XElement xmlFile = YMTXML_Schema(filePath, collectionName, targetSex);
-            xmlFile.Save(filePath);
+            XElement xmlFile = YMTXML_Schema(YMTfilePath, collectionName, targetSex);
+            xmlFile.Save(YMTfilePath);
 
             //create XmlDocument from XElement (codewalker.core requires XmlDocument)
             XmlDocument xmldoc = new XmlDocument();
@@ -1274,9 +1263,9 @@ namespace AkinaRPTool
             Meta meta = XmlMeta.GetMeta(xmldoc);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
 
-            //File.WriteAllText(@"C:\Users\TMMarkus\Desktop\test.xml", xmlFile.ToString());
+            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", xmlFile.ToString()); // Only for Debug propouse.
 
-            File.WriteAllBytes(filePath, newYmtBytes);
+            File.WriteAllBytes(YMTfilePath, newYmtBytes);
         }
        
     }

@@ -1,21 +1,26 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+//using System.Windows.Forms;
 using System.Windows.Input;
 using static AkinaRPTool.ClothData;
 
 using ProgressBar = System.Windows.Forms.ProgressBar;
+using System.Diagnostics;
+using System.Windows.Shapes;
 
 namespace AkinaRPTool
 {
     public class ComboTypeItem : object
     {
         protected string m_Name;
-		protected ClothNameResolver.Type m_Value;
+        protected ClothNameResolver.Type m_Value;
 
         public ComboTypeItem(string name, ClothNameResolver.Type in_value)
         {
@@ -62,8 +67,6 @@ namespace AkinaRPTool
         public ProgressBar statusBar = null;
 
         public static ObservableCollection<ClothData> clothes;
-        public static ObservableCollection<ClothData> maleClothes;
-        public static ObservableCollection<ClothData> femaleClothes;
 
         private static ClothData selectedCloth = null;
         public static ProjectBuild projectBuildWindow = null;
@@ -71,6 +74,9 @@ namespace AkinaRPTool
         private static string appVersion = "v0.0.1";
 
         public static MainWindow Instance { get; private set; }
+
+        private static ListCollectionView clothesList;
+        bool updating = false;
 
         public MainWindow()
         {
@@ -80,35 +86,15 @@ namespace AkinaRPTool
             statusBar = ((ProgressBar)FindName("currentProgress"));
 
             clothes = new ObservableCollection<ClothData>();
-            maleClothes = new ObservableCollection<ClothData>();
-            femaleClothes = new ObservableCollection<ClothData>();
+            clothesList = new ListCollectionView(clothes);
 
-            foreach (var cloth in clothes)
-            {
-                if (cloth.targetSex == Sex.Male)
-                {
-                    maleClothes.Add(cloth);
-                }
-                else if (cloth.targetSex == Sex.Female)
-                {
-                    femaleClothes.Add(cloth);
-                }
-            }
-
-            allListBox.ItemsSource = clothes;
-            maleListBox.ItemsSource = maleClothes;
-            femaleListBox.ItemsSource = femaleClothes;
-
-            allListBox.Visibility = Visibility.Visible;
-            maleListBox.Visibility = Visibility.Hidden;
-            femaleListBox.Visibility = Visibility.Hidden;
+            allListBox.ItemsSource = clothesList;
 
             editGroupBox.Visibility = Visibility.Hidden;
             clothEditWindow.Visibility = Visibility.Hidden;
-            pedPropEditWindow.Visibility = Visibility.Hidden;
 
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             appVersion = "[Alpha v" + fvi.FileVersion + "] AkinaRP Clothes Tool by TMMarkus";
 
             highHeelsNumberText.LostFocus += HighHeels_LostFocus;
@@ -117,7 +103,8 @@ namespace AkinaRPTool
 
             Instance = this;
 
-            MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\nhttps://github.com/TMMarkus/AkinaRP-Clothes-Tool\r\n\r\nFor now, only the \"clothing\" part is available, the \"props\" part is not yet developed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("This application is under development, this means that there may be errors and it may be unstable. If you see any errors, I encourage you to report them on my GitHub.\n" +
+                "https://github.com/TMMarkus/AkinaRP-Clothes-Tool", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         public static void SetStatus(string status)
@@ -134,6 +121,55 @@ namespace AkinaRPTool
             boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
             boton.ContextMenu.IsOpen = true;
         }
+
+        private void OpenMenuGrid_Click(object sender, RoutedEventArgs e)
+        {
+            // Mostrar el menú en la posición del cursor del mouse
+            Grid boton = (Grid)sender;
+            boton.ContextMenu.PlacementTarget = boton;
+            boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            boton.ContextMenu.IsOpen = true;
+        }
+
+        private void ShowFileBrowser(object sender, RoutedEventArgs e)
+        {
+            if (selectedCloth == null) return;
+
+            string folderPath = System.IO.Path.GetDirectoryName(selectedCloth.mainPath);
+
+            if (Directory.Exists(folderPath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = folderPath,
+                    FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show(string.Format("{0} Directory does not exist!", folderPath));
+            }
+        }
+
+        private void UpdateSelection()
+        {
+            ClothData temp = selectedCloth;
+
+            selectedCloth = null;
+
+            foreach (var cloth in allListBox.Items)
+            {
+                if ((ClothData)cloth == temp)
+                {
+                    selectedCloth = temp;
+                    allListBox.SelectedItem = cloth;
+                    break;
+                }
+            }
+        }
+        
 
         private void AddAllClothes_Click_Folder(object sender, RoutedEventArgs e)
         {
@@ -172,26 +208,12 @@ namespace AkinaRPTool
                 var _clothes = clothes.OrderBy(x => x.posi).ToList();
 
                 clothes.Clear();
-                maleClothes.Clear();
-                femaleClothes.Clear();
 
                 foreach (var cloth in _clothes)
                 {
                     if (cloth != selectedCloth)
                     {
                         clothes.Add(cloth);
-                    }
-                }
-
-                foreach (var cloth in clothes)
-                {
-                    if (cloth.targetSex == Sex.Male)
-                    {
-                        maleClothes.Add(cloth);
-                    }
-                    else if (cloth.targetSex == Sex.Female)
-                    {
-                        femaleClothes.Add(cloth);
                     }
                 }
 
@@ -250,51 +272,75 @@ namespace AkinaRPTool
 
         private void ClothesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
+            if (allListBox.Items.Count > 0 && !updating)
             {
-                selectedCloth = (ClothData)e.AddedItems[0];
+                selectedCloth = (ClothData)allListBox.SelectedItem;
+                UpdateWindows();
+            }
+        }
 
-                if (selectedCloth != null)
+        private void UpdateWindows()
+        {
+            if (selectedCloth != null && !updating)
+            {
+                updating = true;
+                editGroupBox.Visibility = Visibility.Visible;
+                clothEditWindow.Visibility = Visibility.Visible;
+
+                UpdateTypeList();
+
+                if (selectedCloth.IsComponent())
                 {
-                    editGroupBox.Visibility = Visibility.Visible;
-                    clothEditWindow.Visibility = Visibility.Hidden;
-                    pedPropEditWindow.Visibility = Visibility.Hidden;
+                    editGroupBox.Header = "Drawable Edit";
+                    headerDrawableName.Header = "Item Name";
 
-                    if (selectedCloth.IsComponent())
-                    {
-                        clothEditWindow.Visibility = Visibility.Visible;
-                        drawableName.Text = selectedCloth.Name;
+                    drawableName.Text = selectedCloth.Name;
 
-                        texturesList.ItemsSource = selectedCloth.textures;
-                        fpModelPath.Text = selectedCloth.fpModelPath != "" ? selectedCloth.fpModelPath : "Not selected...";
+                    texturesList.ItemsSource = selectedCloth.textures;
+                    fpModelPath.Text = selectedCloth.fpModelPath != "" ? selectedCloth.fpModelPath : "Not selected...";
 
-                        unkFlag1Check.IsChecked = selectedCloth.componentFlags.unkFlag1;
-                        unkFlag2Check.IsChecked = selectedCloth.componentFlags.unkFlag2;
-                        unkFlag3Check.IsChecked = selectedCloth.componentFlags.unkFlag3;
-                        unkFlag4Check.IsChecked = selectedCloth.componentFlags.unkFlag4;
-                        isHighHeelsCheck.IsChecked = selectedCloth.componentFlags.isHighHeels;
-                        isReskinCheck.IsChecked = selectedCloth.isReskin;
-                        ID.Text = selectedCloth.Posi.ToString();
-                    }
-                    else
-                    {
-                        
-                        pedPropEditWindow.Visibility = Visibility.Visible;
-                        drawableName.Text = selectedCloth.Name;
-                        pedPropName.Text = selectedCloth.Name;
+                    unkFlag1Check.IsChecked = selectedCloth.componentFlags.unkFlag1;
+                    unkFlag2Check.IsChecked = selectedCloth.componentFlags.unkFlag2;
+                    unkFlag3Check.IsChecked = selectedCloth.componentFlags.unkFlag3;
+                    unkFlag4Check.IsChecked = selectedCloth.componentFlags.unkFlag4;
 
-                        pedPropTexturesList.ItemsSource = selectedCloth.textures;
+                    isHighHeelsCheck.IsChecked = selectedCloth.componentFlags.isHighHeels;
+                    isReskinCheck.IsChecked = selectedCloth.isReskin;
+                    ID.Text = selectedCloth.Posi.ToString();
 
-                        pedPropFlag1.IsChecked = selectedCloth.pedPropFlags.unkFlag1;
-                        pedPropFlag2.IsChecked = selectedCloth.pedPropFlags.unkFlag2;
-                        pedPropFlag3.IsChecked = selectedCloth.pedPropFlags.unkFlag3;
-                        pedPropFlag4.IsChecked = selectedCloth.pedPropFlags.unkFlag4;
-                        pedPropFlag5.IsChecked = selectedCloth.pedPropFlags.unkFlag5;
-                        
-                    }
-
-                    UpdateTypeList();                    
+                    isHighHeelsCheck.Visibility = Visibility.Visible;
+                    isReskinCheck.Visibility = Visibility.Visible;
+                    FPSHeader.Visibility = Visibility.Visible;
+                    highHeelsNumberText.Visibility = Visibility.Visible;
+                    unkFlag5Check.Visibility = Visibility.Hidden;
                 }
+                else
+                {
+                    editGroupBox.Header = "Ped Prop Edit";
+                    headerDrawableName.Header = "Ped Prop Name";
+
+                    drawableName.Text = selectedCloth.Name;
+
+                    texturesList.ItemsSource = selectedCloth.textures;
+
+                    unkFlag1Check.IsChecked = selectedCloth.pedPropFlags.unkFlag1;
+                    unkFlag2Check.IsChecked = selectedCloth.pedPropFlags.unkFlag2;
+                    unkFlag3Check.IsChecked = selectedCloth.pedPropFlags.unkFlag3;
+                    unkFlag4Check.IsChecked = selectedCloth.pedPropFlags.unkFlag4;
+                    unkFlag5Check.IsChecked = selectedCloth.pedPropFlags.unkFlag5;
+
+                    ID.Text = selectedCloth.Posi.ToString();
+
+                    unkFlag5Check.Visibility = Visibility.Visible;
+                    isHighHeelsCheck.Visibility = Visibility.Hidden;
+                    isReskinCheck.Visibility = Visibility.Hidden;
+                    FPSHeader.Visibility = Visibility.Hidden;
+                    highHeelsNumberText.Visibility = Visibility.Hidden;
+                }
+
+                UpdateSelection();
+
+                updating = false;
             }
         }
 
@@ -304,14 +350,7 @@ namespace AkinaRPTool
 
             foreach (ClothNameResolver.Type typ in Enum.GetValues(typeof(ClothNameResolver.Type)))
             {
-                if (typ == ClothNameResolver.Type.PedProp)
-                {
-                    itemType.Items.Add(new ComboTypeItem(typ.ToString() + " (Dont Work!)", typ));
-                }
-                else
-                {
-                    itemType.Items.Add(new ComboTypeItem(typ.ToString(), typ));
-                }
+                itemType.Items.Add(new ComboTypeItem(typ.ToString(), typ));
             }
 
             bool found = false;
@@ -372,8 +411,11 @@ namespace AkinaRPTool
             }
 
             if (!found)
-            {
+            { 
                 itemCategory.SelectedIndex = 0;
+
+                ComboCategoryItem temp_ = (ComboCategoryItem)itemCategory.SelectedItem;
+                selectedCloth.drawableType = temp_.GetValue();
             }
         }
 
@@ -388,13 +430,10 @@ namespace AkinaRPTool
         private void NewProjectButton_Click(object sender, RoutedEventArgs e)
         {
             clothes.Clear();
-            maleClothes.Clear();
-            femaleClothes.Clear();
 
             selectedCloth = null;
 
             clothEditWindow.Visibility = Visibility.Hidden;
-            pedPropEditWindow.Visibility = Visibility.Hidden;
         }
 
         private void OpenProjectButton_Click(object sender, RoutedEventArgs e)
@@ -454,31 +493,88 @@ namespace AkinaRPTool
 
         private void UnkFlag1Check_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
-                selectedCloth.componentFlags.unkFlag1 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
+            if (selectedCloth == null)
+            {
+                return;
+            }
+
+            if (selectedCloth.IsComponent())
+            {
+                selectedCloth.componentFlags.unkFlag1 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
+            else
+            {
+                selectedCloth.pedPropFlags.unkFlag1 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
         }
 
         private void UnkFlag2Check_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
-                selectedCloth.componentFlags.unkFlag2 = unkFlag2Check.IsChecked.GetValueOrDefault(false);
+            if (selectedCloth == null)
+            {
+                return;
+            }
+
+            if (selectedCloth.IsComponent())
+            {
+                selectedCloth.componentFlags.unkFlag2 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
+            else
+            {
+                selectedCloth.pedPropFlags.unkFlag2 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
         }
 
         private void UnkFlag3Check_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
-                selectedCloth.componentFlags.unkFlag3 = unkFlag3Check.IsChecked.GetValueOrDefault(false);
+            if (selectedCloth == null)
+            {
+                return;
+            }
+
+            if (selectedCloth.IsComponent())
+            {
+                selectedCloth.componentFlags.unkFlag3 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
+            else
+            {
+                selectedCloth.pedPropFlags.unkFlag3 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
         }
 
         private void UnkFlag4Check_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
+            if (selectedCloth == null)
+            {
+                return;
+            }
+
+            if (selectedCloth.IsComponent())
+            {
                 selectedCloth.componentFlags.unkFlag4 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }
+            else
+            {
+                selectedCloth.pedPropFlags.unkFlag4 = unkFlag4Check.IsChecked.GetValueOrDefault(false);
+            }    
+        }
+
+        private void UnkFlag5Check_Checked(object sender, RoutedEventArgs e)
+        {
+            if (selectedCloth == null)
+            {
+                return;
+            }
+
+            if (!selectedCloth.IsComponent())
+            {
+                selectedCloth.pedPropFlags.unkFlag5 = unkFlag5Check.IsChecked.GetValueOrDefault(false);
+            }
         }
 
         private void IsHighHeelsCheck_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
+            if (selectedCloth != null && selectedCloth.IsComponent())
             {
                 selectedCloth.componentFlags.isHighHeels = isHighHeelsCheck.IsChecked.GetValueOrDefault(false);
                 highHeelsNumberText.IsEnabled = !highHeelsNumberText.IsEnabled;
@@ -521,6 +617,11 @@ namespace AkinaRPTool
 
         private void HihgHeelsNumber_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (selectedCloth == null || !selectedCloth.IsComponent())
+            {
+                return;
+            }
+
             // Obtener el texto actual del TextBox.
             string text = (sender as TextBox).Text;
 
@@ -566,91 +667,54 @@ namespace AkinaRPTool
 
         private void isReskinCheck_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
+            if (selectedCloth != null && selectedCloth.IsComponent())
                 selectedCloth.isReskin = isReskinCheck.IsChecked.GetValueOrDefault(false);
         }
 
         private void ClearFPModel_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
+            if (selectedCloth != null && selectedCloth.IsComponent())
+            {
                 selectedCloth.fpModelPath = "";
-            fpModelPath.Text = "Not selected...";
+                fpModelPath.Text = "Not selected...";
+            }
         }
 
         private void SelectFPModel_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null)
-                ProjectController.Instance().SetFPModel(selectedCloth);
-            fpModelPath.Text = selectedCloth.fpModelPath != "" ? selectedCloth.fpModelPath : "Not selected...";
-        }
-
-        
-        private void PedPropName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (selectedCloth != null)
+            if (selectedCloth != null && selectedCloth.IsComponent())
             {
-                selectedCloth.Name = drawableName.Text;
+                ProjectController.Instance().SetFPModel(selectedCloth);
+                fpModelPath.Text = selectedCloth.fpModelPath != "" ? selectedCloth.fpModelPath : "Not selected...";
             }
         }
-
-        private void PedPropFlag1_Checked(object sender, RoutedEventArgs e)
-        {
-            if (selectedCloth != null)
-                selectedCloth.pedPropFlags.unkFlag1 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
-        }
-
-        private void PedPropFlag2_Checked(object sender, RoutedEventArgs e)
-        {
-            if (selectedCloth != null)
-                selectedCloth.pedPropFlags.unkFlag2 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
-        }
-
-        private void PedPropFlag3_Checked(object sender, RoutedEventArgs e)
-        {
-            if (selectedCloth != null)
-                selectedCloth.pedPropFlags.unkFlag3 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
-        }
-
-        private void PedPropFlag4_Checked(object sender, RoutedEventArgs e)
-        {
-            if (selectedCloth != null)
-                selectedCloth.pedPropFlags.unkFlag4 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
-        }
-
-        private void PedPropFlag5_Checked(object sender, RoutedEventArgs e)
-        {
-            if (selectedCloth != null)
-                selectedCloth.pedPropFlags.unkFlag5 = unkFlag1Check.IsChecked.GetValueOrDefault(false);
-        }
-        
 
         private void ViewOnlySex_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (listsItems == null) return;
+            if (allListBox == null) return;
 
             ComboBox cmb = sender as ComboBox;
 
-            allListBox.Visibility = Visibility.Hidden;
-            maleListBox.Visibility = Visibility.Hidden;
-            femaleListBox.Visibility = Visibility.Hidden;
 
             if (cmb.SelectedIndex == 0)
             {
-                allListBox.Visibility = Visibility.Visible;
+                clothesList.Filter = null;
             }
             else if (cmb.SelectedIndex == 1)
             {
-                maleListBox.Visibility = Visibility.Visible;
+                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Male;
             }
             else if (cmb.SelectedIndex == 2)
             {
-                femaleListBox.Visibility = Visibility.Visible;
+                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Female;
             }
+
+            clothesList.Refresh();
         }
 
         private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (itemType == null || selectedCloth == null) return;
+            if (itemType == null || selectedCloth == null || updating) return;
 
             ComboBox cmb = sender as ComboBox;
             ComboTypeItem targeType = cmb.SelectedItem as ComboTypeItem;
@@ -658,13 +722,15 @@ namespace AkinaRPTool
             if (targeType == null) return;
 
             selectedCloth.clothType = targeType.GetValue();
+
             ProjectController.Instance().UpdateClothesList();
-            UpdateCategoryList();
+            
+            UpdateWindows();
         }
 
         private void Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (itemCategory == null || selectedCloth == null) return;
+            if (itemCategory == null || selectedCloth == null || updating) return;
 
             ComboBox cmb = sender as ComboBox;
             ComboCategoryItem targeCategory = cmb.SelectedItem as ComboCategoryItem;
@@ -672,7 +738,10 @@ namespace AkinaRPTool
             if (targeCategory == null) return;
 
             selectedCloth.drawableType = targeCategory.GetValue();
+
             ProjectController.Instance().UpdateClothesList();
+
+            UpdateWindows();
         }
     }
 }

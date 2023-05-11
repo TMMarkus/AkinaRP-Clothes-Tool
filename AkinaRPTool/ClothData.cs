@@ -120,7 +120,7 @@ namespace AkinaRPTool
         public ClothData(string path, ClothNameResolver.Type _type, ClothNameResolver.DrawableType _drawableType, int _posi, string numeric, string _postfix, Sex sex)
         {
             if (!File.Exists(path))
-                throw new Exception("YDD file not found");
+                throw new Exception("YDD file not found on " + path);
 
             clothType = _type;
             drawableType = _drawableType;

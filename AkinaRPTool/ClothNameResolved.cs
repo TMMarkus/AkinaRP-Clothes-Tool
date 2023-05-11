@@ -36,8 +36,8 @@ namespace AkinaRPTool
             PropHip,
             PropLFoot,
             PropRFoot,
-            PropUnk1,
-            PropUnk2,
+            PropPHLHand,
+            PropPHRHand,
             COUNT
         }
 
@@ -59,7 +59,7 @@ namespace AkinaRPTool
         {
             string[] parts = Path.GetFileNameWithoutExtension(filename).Split('_');
             if (parts.Length < 3)
-                throw new Exception("Wrong drawable name");
+                throw new Exception("Wrong drawable name on " + filename);
 
             if (parts[0].ToLower() == "p")
             {
@@ -79,8 +79,8 @@ namespace AkinaRPTool
                     case "hip": drawableType = DrawableType.PropHip; break;
                     case "lfoot": drawableType = DrawableType.PropLFoot; break;
                     case "rfoot": drawableType = DrawableType.PropRFoot; break;
-                    case "unk1": drawableType = DrawableType.PropUnk1; break;
-                    case "unk2": drawableType = DrawableType.PropUnk2; break;
+                    case "phlhand": drawableType = DrawableType.PropPHLHand; break;
+                    case "phrhand": drawableType = DrawableType.PropPHRHand; break;
                     default: break;
                 }
 
@@ -147,8 +147,29 @@ namespace AkinaRPTool
                 case DrawableType.PropHip: return "p_hip";
                 case DrawableType.PropLFoot: return "p_lfoot";
                 case DrawableType.PropRFoot: return "p_rfoot";
-                case DrawableType.PropUnk1: return "p_unk1";
-                case DrawableType.PropUnk2: return "p_unk2";
+                case DrawableType.PropPHLHand: return "p_phlhand";
+                case DrawableType.PropPHRHand: return "p_phrhand";
+                default: return "";
+            }
+        }
+
+        public static string PropTypeToString(DrawableType type)
+        {
+            switch (type)
+            {
+                case DrawableType.PropHead: return "head";
+                case DrawableType.PropEyes: return "eyes";
+                case DrawableType.PropEars: return "ears";
+                case DrawableType.PropMouth: return "mouth";
+                case DrawableType.PropLHand: return "left_hand";
+                case DrawableType.PropRHand: return "right_hand";
+                case DrawableType.PropLWrist: return "left_wrist";
+                case DrawableType.PropRWrist: return "right_wrist";
+                case DrawableType.PropHip: return "hip";
+                case DrawableType.PropLFoot: return "left_foot";
+                case DrawableType.PropRFoot: return "right_foot";
+                case DrawableType.PropPHLHand: return "ph_left_hand";
+                case DrawableType.PropPHRHand: return "ph_right_hand";
                 default: return "";
             }
         }

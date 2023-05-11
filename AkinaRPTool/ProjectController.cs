@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static AkinaRPTool.ClothData;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AkinaRPTool
 {
@@ -187,12 +188,6 @@ namespace AkinaRPTool
 
                 if (!cData.isVariation)
                 {
-                    if (cData.clothType == ClothNameResolver.Type.PedProp)
-                    {
-                        propFiles.Add(filename);
-                    }
-                    else
-                    {
                         int loops = 1;
 
                         if (targetSex == Sex.All)
@@ -234,14 +229,14 @@ namespace AkinaRPTool
                             else
                             {
                                 omitedFiles.Add(filename);
-                            }
-                            
+                                MessageBox.Show("This file don't have textures:\n" + filename, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }  
 
                             targetSex = Sex.Female;
                         }
 
                         StatusController.SetStatus("Items added. Total: " + MainWindow.clothes.Count);
-                    }
+                    
                 }
                 else
                 {
@@ -310,24 +305,10 @@ namespace AkinaRPTool
             _clothes = _clothes.OrderBy(x => x.posi).ToList();
 
             MainWindow.clothes.Clear();
-            MainWindow.maleClothes.Clear();
-            MainWindow.femaleClothes.Clear();
 
             foreach (var cloth in _clothes)
             {
                 MainWindow.clothes.Add(cloth);
-            }
-
-            foreach (var cloth in MainWindow.clothes)
-            {
-                if (cloth.targetSex == Sex.Male)
-                {
-                    MainWindow.maleClothes.Add(cloth);
-                }
-                else if (cloth.targetSex == Sex.Female)
-                {
-                    MainWindow.femaleClothes.Add(cloth);
-                }
             }
         }
     }
