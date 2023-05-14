@@ -962,9 +962,9 @@ namespace AkinaRPTool
             int[] genAvailComp = { 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 };
             int compCount = 0;
 
-            foreach (ClothNameResolver.DrawableType avComp in Enum.GetValues(typeof(ClothNameResolver.DrawableType)))
+            foreach (DrawableType avComp in Enum.GetValues(typeof(DrawableType)))
             {
-                if(MainWindow.clothes.Any(i => i.drawableType == avComp) && avComp <= DrawableType.Head)
+                if(MainWindow.clothes.Any(i => i.drawableType == avComp) && avComp <= DrawableType.Top)
                 {
                     genAvailComp[((int)avComp)] = 0;
                     compCount++;
@@ -1158,7 +1158,7 @@ namespace AkinaRPTool
                     texDataItem.Add(new XElement("texId", new XAttribute("value", i))); // El indice que tiene la textura.
                     texDataItem.Add(new XElement("inclusionId", new XAttribute("value", "0"))); // No se que gace
                     texDataItem.Add(new XElement("exclusionId", new XAttribute("value", "0"))); // No se que hace
-                    texDataItem.Add(new XElement("distribution", new XAttribute("value", "0"))); // No se que hace
+                    texDataItem.Add(new XElement("distribution", new XAttribute("value", 255))); // No se que hace
                     texData.Add(texDataItem);
                 }
                 aPropMetaDataItem.Add(texData);
@@ -1201,23 +1201,29 @@ namespace AkinaRPTool
                 aPropMetaDataItem.Add(new XElement("hash_AC887A91", new XAttribute("value", "0"))); // No se quehace
                 aPropMetaData.Add(aPropMetaDataItem);                
             }
+
             propInfo.Add(aPropMetaData);
 
             XElement aAnchors = new XElement("aAnchors", new XAttribute("itemType", "CAnchorProps"));
-            foreach (ClothData prop in MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp))
+            foreach (DrawableType type in Enum.GetValues(typeof(DrawableType)))
             {
-                XElement aAnchorsItem = new XElement("Item");
-                string[] props_tex_count = new string[MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp).Count()];
-                for (int i = 0; i < props_tex_count.Length; i++)
+                if (MainWindow.clothes.Any(i => i.drawableType == type) && type > DrawableType.Top)
                 {
-                    props_tex_count[i] = MainWindow.clothes.Where(i => i.clothType == ClothNameResolver.Type.PedProp).ToList()[i].textures.Count().ToString();
+                    XElement aAnchorsItem = new XElement("Item");
+                    string[] props_tex_count = new string[MainWindow.clothes.Where(i => i.drawableType == type).Count()];
+
+                    for (int i = 0; i < props_tex_count.Length; i++)
+                    {
+                        props_tex_count[i] = MainWindow.clothes.Where(i => i.drawableType == type).ToList()[i].textures.Count().ToString();
+                    }
+
+                    aAnchorsItem.Add(new XElement("props", String.Join(" ", props_tex_count)));
+
+                    // PARECE QUE FUNCIONA PERO TENGO MIEDO
+                    aAnchorsItem.Add(new XElement("anchor", "ANCHOR_" + PropTypeToString(type).ToUpper()));
+
+                    aAnchors.Add(aAnchorsItem);
                 }
-                aAnchorsItem.Add(new XElement("props", String.Join(" ", props_tex_count)));
-
-                // REVISAR PORQUE CREO QUE ME LO ACABO DE INVENTAR
-                aAnchorsItem.Add(new XElement("anchor", "ANCHOR_" + ClothNameResolver.PropTypeToString(prop.drawableType).ToUpper()));
-
-                aAnchors.Add(aAnchorsItem);
             }
 
             propInfo.Add(aAnchors);
