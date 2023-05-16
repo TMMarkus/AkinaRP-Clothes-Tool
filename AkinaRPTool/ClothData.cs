@@ -37,7 +37,7 @@ namespace AkinaRPTool
             All
         }
 
-        static int[] idsOffset = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        //static int[] idsOffset = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         static char offsetLetter = 'a';
         static string[] sexIcons = { "👨🏻", "👩🏻", "⚥" };
         static string[] typeIcons = { "🧥", "👓" };
@@ -47,7 +47,7 @@ namespace AkinaRPTool
 
         public string mainPath = "";
         string origNumerics = "";
-        string postfix = "";
+        //string postfix = "";
 
         public ComponentFlags componentFlags;
         public PedPropFlags pedPropFlags;

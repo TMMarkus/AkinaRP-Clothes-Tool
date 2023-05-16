@@ -945,11 +945,18 @@ namespace AkinaRPTool
                 {
                     string YMTfilePath = outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".ymt";
                     GenerateYMT(outputFolder, YMTfilePath, collectionName, newTargetSex);
+
                     File.WriteAllText(outputFolder + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".meta", GenerateShopMeta(newTargetSex, collectionName));
                     resourceLUAMetas.Add(prefixes + "freemode_01_" + prefixes + collectionName + ".meta");
                 }
 
                 newTargetSex = Sex.Female;
+            }
+
+            if (MainWindow.clothes.Any(c => c.drawableType == DrawableType.Shoes) || MainWindow.clothes.Any(c => c.drawableType == DrawableType.PropHead))
+            {
+                string CreaturefilePath = outputFolder + "\\stream\\" + "mp_creaturemetadata_" + collectionName + ".ymt";
+                SaveCreature(outputFolder, CreaturefilePath);
             }
 
             File.WriteAllText(outputFolder + "\\fxmanifest.lua", GenerateResourceLua(resourceLUAMetas));
@@ -987,7 +994,7 @@ namespace AkinaRPTool
         }
 
 
-        public static XElement YMTXML_Schema(string fullpath, string collectionName, Sex targetSex)
+        private static XElement YMTXML_Schema(string collectionName, Sex targetSex)
         {
             bool bHasTexVariations = false;
             bool bHasDrawblVariations = false;
@@ -1112,7 +1119,15 @@ namespace AkinaRPTool
 
                 compInfoItem.Add(new XElement("hash_2FD08CEF", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_FC507D28", "none")); //not sure what it does
-                compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));  //component expressionMods (?) - gives ability to do heels
+
+                string[] highHeels = new string[] { "0", "0", "0", "0", "0" };
+
+                if (cloth.componentFlags.isHighHeels)
+                {
+                    // Tengo que mirar como poner los high heels en los diferentes componentes
+                }
+
+                compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", highHeels)));  //component expressionMods (?) - gives ability to do heels
                 compInfoItem.Add(new XElement("flags", new XAttribute("value", 0))); //not sure what it does
                 compInfoItem.Add(new XElement("inclusions", "0")); //not sure what it does
                 compInfoItem.Add(new XElement("exclusions", "0")); //not sure what it does
@@ -1257,9 +1272,9 @@ namespace AkinaRPTool
             return xml;
             // END OF FILE || END -> CPedVariationInfo
         }
-        public static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
+        private static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
         {
-            XElement xmlFile = YMTXML_Schema(YMTfilePath, collectionName, targetSex);
+            XElement xmlFile = YMTXML_Schema(collectionName, targetSex);
             xmlFile.Save(YMTfilePath);
 
             //create XmlDocument from XElement (codewalker.core requires XmlDocument)
@@ -1273,6 +1288,91 @@ namespace AkinaRPTool
 
             File.WriteAllBytes(YMTfilePath, newYmtBytes);
         }
-       
+
+        private static XElement Creature_Schema()
+        {
+            XElement xml = new XElement("CCreatureMetaData");
+
+            XElement pedCompExpressions = new XElement("pedCompExpressions");
+            if (MainWindow.clothes.Where(c => c.drawableType == DrawableType.Shoes).Count() > 0)
+            {
+                /* lets test without first entry in components
+                 * 
+                //heels doesn't have that first entry but without it, fivem was sometimes crashing(?)
+                XElement FirstpedCompItem = new XElement("Item");
+                FirstpedCompItem.Add(new XElement("pedCompID", new XAttribute("value", String.Format("0x{0:X}", 6))));
+                FirstpedCompItem.Add(new XElement("pedCompVarIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedCompItem.Add(new XElement("pedCompExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedCompItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                FirstpedCompItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 28462));
+                FirstpedCompItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                FirstpedCompItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                pedCompExpressions.Add(FirstpedCompItem);
+
+                */
+
+                foreach (ClothData comp in MainWindow.clothes.Where(c => c.drawableType == DrawableType.Shoes))
+                {
+                    XElement pedCompItem = new XElement("Item");
+                    pedCompItem.Add(new XElement("pedCompID", new XAttribute("value", String.Format("0x{0:X}", 6))));
+                    pedCompItem.Add(new XElement("pedCompVarIndex", new XAttribute("value", String.Format("0x{0:X}", comp.posi))));
+                    pedCompItem.Add(new XElement("pedCompExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", 4))));
+                    pedCompItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                    pedCompItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 28462));
+                    pedCompItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                    pedCompItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                    pedCompExpressions.Add(pedCompItem);
+                }
+            }
+            xml.Add(pedCompExpressions);
+
+            XElement pedPropExpressions = new XElement("pedPropExpressions");
+            if (MainWindow.clothes.Where(p => p.drawableType == DrawableType.PropHead).Count() > 0)
+            {
+                //all original GTA have that one first entry, without it, fivem was sometimes crashing(?)
+                XElement FirstpedPropItem = new XElement("Item");
+                FirstpedPropItem.Add(new XElement("pedPropID", new XAttribute("value", String.Format("0x{0:X}", 0))));
+                FirstpedPropItem.Add(new XElement("pedPropVarIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedPropItem.Add(new XElement("pedPropExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedPropItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                FirstpedPropItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 13201));
+                FirstpedPropItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                FirstpedPropItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                pedPropExpressions.Add(FirstpedPropItem);
+
+                foreach (ClothData prop in MainWindow.clothes.Where(p => p.drawableType == DrawableType.PropHead))
+                {
+                    XElement pedPropItem = new XElement("Item");
+                    pedPropItem.Add(new XElement("pedPropID", new XAttribute("value", String.Format("0x{0:X}", 0))));
+                    pedPropItem.Add(new XElement("pedPropVarIndex", new XAttribute("value", String.Format("0x{0:X}", prop.posi))));
+                    pedPropItem.Add(new XElement("pedPropExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", 0))));
+                    pedPropItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                    pedPropItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 13201));
+                    pedPropItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                    pedPropItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                    pedPropExpressions.Add(pedPropItem);
+                }
+            }
+            xml.Add(pedPropExpressions);
+
+            return xml;
+        }
+
+        public static void SaveCreature(string outputFolder, string creaturePath)
+        {
+            XElement CreatureFile = Creature_Schema();
+            CreatureFile.Save(creaturePath);
+
+            //create XmlDocument from XElement
+            var xmldoc = new XmlDocument();
+            xmldoc.Load(CreatureFile.CreateReader());
+
+            RbfFile rbf = XmlRbf.GetRbf(xmldoc);
+
+            File.WriteAllText(outputFolder + @"\ClothData_CreatureMeta_Debug.xml", CreatureFile.ToString()); // Only for Debug propouse.
+
+            File.WriteAllBytes(creaturePath, rbf.Save());
+        }
+
     }
 }

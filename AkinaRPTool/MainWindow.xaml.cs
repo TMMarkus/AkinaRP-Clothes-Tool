@@ -574,7 +574,7 @@ namespace AkinaRPTool
 
         private void IsHighHeelsCheck_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null && selectedCloth.IsComponent())
+            if (selectedCloth != null && (selectedCloth.IsComponent() || selectedCloth.drawableType == ClothNameResolver.DrawableType.PropHead))
             {
                 selectedCloth.componentFlags.isHighHeels = isHighHeelsCheck.IsChecked.GetValueOrDefault(false);
                 highHeelsNumberText.IsEnabled = !highHeelsNumberText.IsEnabled;
