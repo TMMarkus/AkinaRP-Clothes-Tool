@@ -53,6 +53,29 @@
                                 <ComboBoxItem Content="All" />
                                 <ComboBoxItem Content="Only Male" />
                                 <ComboBoxItem Content="Only Female" />
+                                <ComboBoxItem Content="Only Head" />
+                                <ComboBoxItem Content="Only Mask" />
+                                <ComboBoxItem Content="Only Hair" />
+                                <ComboBoxItem Content="Only Body" />
+                                <ComboBoxItem Content="Only Legs" />
+                                <ComboBoxItem Content="Only Bag" />
+                                <ComboBoxItem Content="Only Shoes" />
+                                <ComboBoxItem Content="Only Accessories" />
+                                <ComboBoxItem Content="Only Undershirt" />
+                                <ComboBoxItem Content="Only Armor" />
+                                <ComboBoxItem Content="Only Decal" />
+                                <ComboBoxItem Content="Only Top" />
+                                <ComboBoxItem Content="Only PropHead" />
+                                <ComboBoxItem Content="Only PropEyes" />
+                                <ComboBoxItem Content="Only PropEars" />
+                                <ComboBoxItem Content="Only PropMouth" />
+                                <ComboBoxItem Content="Only PropLHand" />
+                                <ComboBoxItem Content="Only PropRWrist" />
+                                <ComboBoxItem Content="Only PropHip" />
+                                <ComboBoxItem Content="Only PropLFoot" />
+                                <ComboBoxItem Content="Only PropRFoot" />
+                                <ComboBoxItem Content="Only PropPHLHand" />
+                                <ComboBoxItem Content="Only PropPHRHand" />
                             </ComboBox>
                         </Border>
                     </Grid>
@@ -85,7 +108,7 @@
 
                     <Grid Grid.Row="2">
 
-                        <ListBox x:Name="allListBox" Visibility="Visible" BorderBrush="Black" SelectionChanged="ClothesListBox_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTextSearchEnabled="False" Focusable="False">
+                        <ListBox x:Name="allListBox"  Visibility="Visible" BorderBrush="Black" SelectionChanged="ClothesListBox_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTextSearchEnabled="False" Focusable="False">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid MouseRightButtonDown="OpenMenuGrid_Click">

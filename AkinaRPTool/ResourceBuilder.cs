@@ -973,7 +973,7 @@ namespace AkinaRPTool
             {
                 if(MainWindow.clothes.Any(i => i.drawableType == avComp) && avComp <= DrawableType.Top)
                 {
-                    genAvailComp[((int)avComp)] = 0;
+                    genAvailComp[((int)avComp)] = compCount;
                     compCount++;
                 }
             }
@@ -997,7 +997,7 @@ namespace AkinaRPTool
         private static XElement YMTXML_Schema(string collectionName, Sex targetSex)
         {
             bool bHasTexVariations = false;
-            bool bHasDrawblVariations = false;
+            bool bHasDrawblVariations = true;
             bool bHasLowLODs = false;
             bool bIsSuperLOD = false;
 
@@ -1049,23 +1049,25 @@ namespace AkinaRPTool
                         {
                             case 2:
                             case 7:
-                                _propMask = 11; break;
+                                _propMask = 11;
+                                break;
                             case 5:
                             case 8:
-                                _propMask = 65; break;
+                                _propMask = 65;
+                                break;
                             case 10:
-                                _propMask = 5; break;
+                                _propMask = 5;
+                                break;
                             default:
                                 break;
                         }
-
-
-                        int _numAlternatives = 0; // Siempre y cuando se llegua a implementar algo asi.
 
                         if (item.isReskin)
                         {
                             _propMask = 17;
                         }
+
+                        int _numAlternatives = 0; // Siempre y cuando se llegua a implementar algo asi.
 
                         drawblDataIndex.Add(new XElement("propMask", new XAttribute("value", _propMask)));
                         drawblDataIndex.Add(new XElement("numAlternatives", new XAttribute("value", _numAlternatives)));

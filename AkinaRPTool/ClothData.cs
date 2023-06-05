@@ -47,7 +47,7 @@ namespace AkinaRPTool
 
         public string mainPath = "";
         string origNumerics = "";
-        //string postfix = "";
+        string postfix = "";
 
         public ComponentFlags componentFlags;
         public PedPropFlags pedPropFlags;

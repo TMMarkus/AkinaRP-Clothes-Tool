@@ -14,6 +14,7 @@ using static AkinaRPTool.ClothData;
 using ProgressBar = System.Windows.Forms.ProgressBar;
 using System.Diagnostics;
 using System.Windows.Shapes;
+using System.Drawing;
 
 namespace AkinaRPTool
 {
@@ -695,18 +696,27 @@ namespace AkinaRPTool
 
             ComboBox cmb = sender as ComboBox;
 
-
-            if (cmb.SelectedIndex == 0)
+            try {
+                if (cmb.SelectedIndex == 0)
+                {
+                    clothesList.Filter = null;
+                }
+                else if (cmb.SelectedIndex == 1)
+                {
+                    clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Male;
+                }
+                else if (cmb.SelectedIndex == 2)
+                {
+                    clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Female;
+                }
+                else
+                {                    
+                    clothesList.Filter = (item) => ((ClothData)item).drawableType == (ClothNameResolver.DrawableType)Enum.ToObject(typeof(ClothNameResolver.DrawableType), cmb.SelectedIndex - 3);
+                }
+            }
+            catch(Exception ex)
             {
                 clothesList.Filter = null;
-            }
-            else if (cmb.SelectedIndex == 1)
-            {
-                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Male;
-            }
-            else if (cmb.SelectedIndex == 2)
-            {
-                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Female;
             }
 
             clothesList.Refresh();
