@@ -287,6 +287,11 @@ namespace AkinaRPTool
                 updating = true;
                 editGroupBox.Visibility = Visibility.Visible;
                 clothEditWindow.Visibility = Visibility.Visible;
+                unkFlag5Check.Visibility = Visibility.Hidden;
+                isHighHeelsCheck.Visibility = Visibility.Hidden;
+                highHeelsNumberText.Visibility = Visibility.Hidden;
+                isReskinCheck.Visibility = Visibility.Hidden;
+                FPSHeader.Visibility = Visibility.Hidden;
 
                 UpdateTypeList();
 
@@ -309,11 +314,15 @@ namespace AkinaRPTool
                     isReskinCheck.IsChecked = selectedCloth.isReskin;
                     ID.Text = selectedCloth.Posi.ToString();
 
-                    isHighHeelsCheck.Visibility = Visibility.Visible;
+                    
                     isReskinCheck.Visibility = Visibility.Visible;
                     FPSHeader.Visibility = Visibility.Visible;
-                    highHeelsNumberText.Visibility = Visibility.Visible;
-                    unkFlag5Check.Visibility = Visibility.Hidden;
+
+                    if(selectedCloth.drawableType == ClothNameResolver.DrawableType.Shoes)
+                    {
+                        isHighHeelsCheck.Visibility = Visibility.Visible;
+                        highHeelsNumberText.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
@@ -333,10 +342,12 @@ namespace AkinaRPTool
                     ID.Text = selectedCloth.Posi.ToString();
 
                     unkFlag5Check.Visibility = Visibility.Visible;
-                    isHighHeelsCheck.Visibility = Visibility.Hidden;
-                    isReskinCheck.Visibility = Visibility.Hidden;
-                    FPSHeader.Visibility = Visibility.Hidden;
-                    highHeelsNumberText.Visibility = Visibility.Hidden;
+
+                    if (selectedCloth.drawableType == ClothNameResolver.DrawableType.PropHead)
+                    {
+                        isHighHeelsCheck.Visibility = Visibility.Visible;
+                        highHeelsNumberText.Visibility = Visibility.Visible;
+                    }
                 }
 
                 UpdateSelection();
@@ -575,7 +586,7 @@ namespace AkinaRPTool
 
         private void IsHighHeelsCheck_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null && (selectedCloth.IsComponent() || selectedCloth.drawableType == ClothNameResolver.DrawableType.PropHead))
+            if (selectedCloth != null && (selectedCloth.drawableType == ClothNameResolver.DrawableType.Shoes || selectedCloth.drawableType == ClothNameResolver.DrawableType.PropHead))
             {
                 selectedCloth.componentFlags.isHighHeels = isHighHeelsCheck.IsChecked.GetValueOrDefault(false);
                 highHeelsNumberText.IsEnabled = !highHeelsNumberText.IsEnabled;
@@ -618,7 +629,7 @@ namespace AkinaRPTool
 
         private void HihgHeelsNumber_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (selectedCloth == null || !selectedCloth.IsComponent())
+            if (selectedCloth == null || (selectedCloth.drawableType != ClothNameResolver.DrawableType.Shoes && selectedCloth.drawableType != ClothNameResolver.DrawableType.PropHead))
             {
                 return;
             }
@@ -659,10 +670,7 @@ namespace AkinaRPTool
                 return;
             }
 
-            if (selectedCloth != null && double.TryParse(text, out double result))
-            {
-                selectedCloth.highHeelsNumber = result;
-            }
+            selectedCloth.highHeelsNumber = text;
         }
 
 

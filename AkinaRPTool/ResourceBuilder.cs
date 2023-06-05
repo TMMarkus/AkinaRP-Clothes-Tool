@@ -996,7 +996,7 @@ namespace AkinaRPTool
 
         private static XElement YMTXML_Schema(string collectionName, Sex targetSex)
         {
-            bool bHasTexVariations = false;
+            bool bHasTexVariations = true;
             bool bHasDrawblVariations = true;
             bool bHasLowLODs = false;
             bool bIsSuperLOD = false;
@@ -1124,9 +1124,9 @@ namespace AkinaRPTool
 
                 string[] highHeels = new string[] { "0", "0", "0", "0", "0" };
 
-                if (cloth.componentFlags.isHighHeels)
+                if (cloth.componentFlags.isHighHeels && cloth.drawableType == DrawableType.Shoes)
                 {
-                    // Tengo que mirar como poner los high heels en los diferentes componentes
+                    highHeels = new string[] { cloth.highHeelsNumber, "0", "0", "0", "0" };
                 }
 
                 compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", highHeels)));  //component expressionMods (?) - gives ability to do heels
@@ -1161,7 +1161,15 @@ namespace AkinaRPTool
             {
                 XElement aPropMetaDataItem = new XElement("Item");
                 aPropMetaDataItem.Add(new XElement("audioId", "none")); // Añade un sonido al prop (No implementado) (Audio ID)
-                aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));
+
+                String[] expressionsMods = new string[] { "0", "0", "0", "0", "0" };
+
+                if (prop.componentFlags.isHighHeels && prop.drawableType == DrawableType.PropHead)
+                {
+                    expressionsMods = new string[] { "0", "0", "0", "0", prop.highHeelsNumber };
+                }
+
+                aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", expressionsMods)));
 
                 XElement texData = new XElement("texData", new XAttribute("itemType", "CPedPropTexData"));
 
@@ -1279,14 +1287,17 @@ namespace AkinaRPTool
             XElement xmlFile = YMTXML_Schema(collectionName, targetSex);
             xmlFile.Save(YMTfilePath);
 
-            //create XmlDocument from XElement (codewalker.core requires XmlDocument)
-            XmlDocument xmldoc = new XmlDocument();
-            xmldoc.Load(xmlFile.CreateReader());
+            XDocument xmldoc = new XDocument("1.0", "UTF-8", null);
+            xmldoc.Add(xmlFile);
 
-            Meta meta = XmlMeta.GetMeta(xmldoc);
+            var xmlDocument = new XmlDocument();
+
+            xmlDocument.Load(xmldoc.CreateReader());
+
+            Meta meta = XmlMeta.GetMeta(xmlDocument);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
 
-            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", xmlFile.ToString()); // Only for Debug propouse.
+            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", xmlDocument.ToString()); // Only for Debug propouse.
 
             File.WriteAllBytes(YMTfilePath, newYmtBytes);
         }
@@ -1367,6 +1378,10 @@ namespace AkinaRPTool
 
             //create XmlDocument from XElement
             var xmldoc = new XmlDocument();
+
+            XmlDeclaration xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            xmldoc.AppendChild(xmlDeclaration);
+
             xmldoc.Load(CreatureFile.CreateReader());
 
             RbfFile rbf = XmlRbf.GetRbf(xmldoc);
