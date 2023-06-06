@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Xml;
 using System.Xml.Linq;
 using static AkinaRPTool.ClothData;
@@ -998,6 +999,7 @@ namespace AkinaRPTool
         {
             bool bHasTexVariations = true;
             bool bHasDrawblVariations = true;
+
             bool bHasLowLODs = false;
             bool bIsSuperLOD = false;
 
@@ -1287,19 +1289,40 @@ namespace AkinaRPTool
             XElement xmlFile = YMTXML_Schema(collectionName, targetSex);
             xmlFile.Save(YMTfilePath);
 
-            XDocument xmldoc = new XDocument("1.0", "UTF-8", null);
-            xmldoc.Add(xmlFile);
-
             var xmlDocument = new XmlDocument();
 
-            xmlDocument.Load(xmldoc.CreateReader());
+            xmlDocument.Load(xmlFile.CreateReader());
+
+            XmlDeclaration xmldecl;
+            xmldecl = xmlDocument.CreateXmlDeclaration("1.0", null, null);
+            xmldecl.Encoding = "UTF-8";
+            xmldecl.Standalone = "yes";
+
+            XmlElement root = xmlDocument.DocumentElement;
+            xmlDocument.InsertBefore(xmldecl, root);
 
             Meta meta = XmlMeta.GetMeta(xmlDocument);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
 
-            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", xmlDocument.ToString()); // Only for Debug propouse.
+            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", Beautify(xmlDocument)); // Only for Debug propouse.
 
             File.WriteAllBytes(YMTfilePath, newYmtBytes);
+        }
+        static public string Beautify(this XmlDocument doc)
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "  ",
+                NewLineChars = "\r\n",
+                NewLineHandling = NewLineHandling.Replace
+            };
+            using (XmlWriter writer = XmlWriter.Create(sb, settings))
+            {
+                doc.Save(writer);
+            }
+            return sb.ToString();
         }
 
         private static XElement Creature_Schema()
@@ -1378,9 +1401,6 @@ namespace AkinaRPTool
 
             //create XmlDocument from XElement
             var xmldoc = new XmlDocument();
-
-            XmlDeclaration xmlDeclaration = xmldoc.CreateXmlDeclaration("1.0", "UTF-8", null);
-            xmldoc.AppendChild(xmlDeclaration);
 
             xmldoc.Load(CreatureFile.CreateReader());
 
