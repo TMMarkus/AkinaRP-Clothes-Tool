@@ -21,7 +21,7 @@ using MCComponentInfo = RageLib.GTA5.ResourceWrappers.PC.Meta.Structures.MCCompo
 
 namespace AkinaRPTool
 {
-    public class ResourceBuilder
+    public static class ResourceBuilder
     {
         public static string GenerateShopMeta(Sex targetSex, string collectionName)
         {
@@ -997,7 +997,7 @@ namespace AkinaRPTool
 
         private static XElement YMTXML_Schema(string collectionName, Sex targetSex)
         {
-            bool bHasTexVariations = true;
+            bool bHasTexVariations = false;
             bool bHasDrawblVariations = true;
 
             bool bHasLowLODs = false;
@@ -1284,46 +1284,6 @@ namespace AkinaRPTool
             return xml;
             // END OF FILE || END -> CPedVariationInfo
         }
-        private static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
-        {
-            XElement xmlFile = YMTXML_Schema(collectionName, targetSex);
-            xmlFile.Save(YMTfilePath);
-
-            var xmlDocument = new XmlDocument();
-
-            xmlDocument.Load(xmlFile.CreateReader());
-
-            XmlDeclaration xmldecl;
-            xmldecl = xmlDocument.CreateXmlDeclaration("1.0", null, null);
-            xmldecl.Encoding = "UTF-8";
-            xmldecl.Standalone = "yes";
-
-            XmlElement root = xmlDocument.DocumentElement;
-            xmlDocument.InsertBefore(xmldecl, root);
-
-            Meta meta = XmlMeta.GetMeta(xmlDocument);
-            byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
-
-            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", Beautify(xmlDocument)); // Only for Debug propouse.
-
-            File.WriteAllBytes(YMTfilePath, newYmtBytes);
-        }
-        static public string Beautify(this XmlDocument doc)
-        {
-            StringBuilder sb = new StringBuilder();
-            XmlWriterSettings settings = new XmlWriterSettings
-            {
-                Indent = true,
-                IndentChars = "  ",
-                NewLineChars = "\r\n",
-                NewLineHandling = NewLineHandling.Replace
-            };
-            using (XmlWriter writer = XmlWriter.Create(sb, settings))
-            {
-                doc.Save(writer);
-            }
-            return sb.ToString();
-        }
 
         private static XElement Creature_Schema()
         {
@@ -1394,19 +1354,42 @@ namespace AkinaRPTool
             return xml;
         }
 
+        private static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
+        {
+            XElement xmlFile = YMTXML_Schema(collectionName, targetSex);
+
+            xmlFile.Save(YMTfilePath);
+
+            string result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlFile.ToString();
+
+            var xmlDocument = new XmlDocument();
+
+            xmlDocument.LoadXml(result);
+
+            Meta meta = XmlMeta.GetMeta(xmlDocument);
+            byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
+
+            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", result); // Only for Debug propouse.
+
+            File.WriteAllBytes(YMTfilePath, newYmtBytes);
+        }
+
         public static void SaveCreature(string outputFolder, string creaturePath)
         {
             XElement CreatureFile = Creature_Schema();
+
             CreatureFile.Save(creaturePath);
+
+            string result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + CreatureFile.ToString();
 
             //create XmlDocument from XElement
             var xmldoc = new XmlDocument();
 
-            xmldoc.Load(CreatureFile.CreateReader());
+            xmldoc.LoadXml(result);
 
             RbfFile rbf = XmlRbf.GetRbf(xmldoc);
 
-            File.WriteAllText(outputFolder + @"\ClothData_CreatureMeta_Debug.xml", CreatureFile.ToString()); // Only for Debug propouse.
+            File.WriteAllText(outputFolder + @"\ClothData_CreatureMeta_Debug.xml", result); // Only for Debug propouse.
 
             File.WriteAllBytes(creaturePath, rbf.Save());
         }
