@@ -311,6 +311,7 @@ namespace AkinaRPTool
                     unkFlag4Check.IsChecked = selectedCloth.componentFlags.unkFlag4;
 
                     isHighHeelsCheck.IsChecked = selectedCloth.componentFlags.isHighHeels;
+                    highHeelsNumberText.Text = selectedCloth.highHeelsNumber;
                     isReskinCheck.IsChecked = selectedCloth.isReskin;
                     ID.Text = selectedCloth.Posi.ToString();
 
@@ -342,12 +343,6 @@ namespace AkinaRPTool
                     ID.Text = selectedCloth.Posi.ToString();
 
                     unkFlag5Check.Visibility = Visibility.Visible;
-
-                    if (selectedCloth.drawableType == ClothNameResolver.DrawableType.PropHead)
-                    {
-                        isHighHeelsCheck.Visibility = Visibility.Visible;
-                        highHeelsNumberText.Visibility = Visibility.Visible;
-                    }
                 }
 
                 UpdateSelection();
@@ -601,14 +596,15 @@ namespace AkinaRPTool
             }
         }
 
-        private void NumberValidationTextBox(object sender, KeyEventArgs e)
+        private void NumberValidationTextBox(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            // Permitir sólo números, el punto y la tecla de retroceso.
-            if ((e.Key < Key.D0 || e.Key > Key.D9) && e.Key != Key.Back && e.Key != Key.Decimal && e.Key != Key.OemPeriod)
-            {
-                e.Handled = true;
-            }
+            // Utilizar una expresión regular para permitir solo números enteros
+            Regex regex = new Regex(@"^[0-9]+(\.[0-9]{0,2})?$");
+            e.Handled = !regex.IsMatch(highHeelsNumberText.Text + e.Text);
+        }
 
+        private void TextLostFocusEnter(object sender, KeyEventArgs e)
+        {
             if (e.Key == Key.Enter)
             {
                 if (string.IsNullOrEmpty(highHeelsNumberText.Text))
@@ -638,37 +634,6 @@ namespace AkinaRPTool
             string text = (sender as TextBox).Text;
 
             // Validar el formato del número ingresado.
-
-            bool notValid = false;
-
-            if (text.Length >= 1 && !Regex.IsMatch(text[0].ToString(), @"^[0-9]$"))
-            {
-                notValid = true;
-            }
-
-            if (text.Length >= 2 && !Regex.IsMatch(text[1].ToString(), @"^\.$"))
-            {
-                notValid = true;
-            }
-
-            if (text.Length >= 3 && !Regex.IsMatch(text[2].ToString(), @"^[0-9]$"))
-            {
-                notValid = true;
-            }
-
-            if (text.Length > 3)
-            {
-                notValid = true;
-            }
-
-
-            if (notValid)
-            {
-                int caretIndex = (sender as TextBox).CaretIndex;
-                (sender as TextBox).Text = text.Remove(caretIndex - 1, 1);
-                (sender as TextBox).CaretIndex = caretIndex - 1;
-                return;
-            }
 
             selectedCloth.highHeelsNumber = text;
         }

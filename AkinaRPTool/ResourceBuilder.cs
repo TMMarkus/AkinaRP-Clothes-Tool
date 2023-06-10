@@ -1126,9 +1126,9 @@ namespace AkinaRPTool
 
                 string[] highHeels = new string[] { "0", "0", "0", "0", "0" };
 
-                if (cloth.componentFlags.isHighHeels && cloth.drawableType == DrawableType.Shoes)
+                if (cloth.drawableType == DrawableType.Shoes && cloth.componentFlags.isHighHeels)
                 {
-                    highHeels = new string[] { cloth.highHeelsNumber, "0", "0", "0", "0" };
+                    highHeels = new string[] { "0", "0", "0", "0", cloth.highHeelsNumber };
                 }
 
                 compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", highHeels)));  //component expressionMods (?) - gives ability to do heels
