@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Xml;
 using System.Xml.Linq;
 using static AkinaRPTool.ClothData;
@@ -20,7 +21,7 @@ using MCComponentInfo = RageLib.GTA5.ResourceWrappers.PC.Meta.Structures.MCCompo
 
 namespace AkinaRPTool
 {
-    public class ResourceBuilder
+    public static class ResourceBuilder
     {
         public static string GenerateShopMeta(Sex targetSex, string collectionName)
         {
@@ -945,11 +946,18 @@ namespace AkinaRPTool
                 {
                     string YMTfilePath = outputFolder + "\\stream\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".ymt";
                     GenerateYMT(outputFolder, YMTfilePath, collectionName, newTargetSex);
+
                     File.WriteAllText(outputFolder + "\\" + prefixes + "freemode_01_" + prefixes + collectionName + ".meta", GenerateShopMeta(newTargetSex, collectionName));
                     resourceLUAMetas.Add(prefixes + "freemode_01_" + prefixes + collectionName + ".meta");
                 }
 
                 newTargetSex = Sex.Female;
+            }
+
+            if (MainWindow.clothes.Any(c => c.drawableType == DrawableType.Shoes) || MainWindow.clothes.Any(c => c.drawableType == DrawableType.PropHead))
+            {
+                string CreaturefilePath = outputFolder + "\\stream\\" + "mp_creaturemetadata_" + collectionName + ".ymt";
+                SaveCreature(outputFolder, CreaturefilePath);
             }
 
             File.WriteAllText(outputFolder + "\\fxmanifest.lua", GenerateResourceLua(resourceLUAMetas));
@@ -966,7 +974,7 @@ namespace AkinaRPTool
             {
                 if(MainWindow.clothes.Any(i => i.drawableType == avComp) && avComp <= DrawableType.Top)
                 {
-                    genAvailComp[((int)avComp)] = 0;
+                    genAvailComp[((int)avComp)] = compCount;
                     compCount++;
                 }
             }
@@ -987,10 +995,11 @@ namespace AkinaRPTool
         }
 
 
-        public static XElement YMTXML_Schema(string fullpath, string collectionName, Sex targetSex)
+        private static XElement YMTXML_Schema(string collectionName, Sex targetSex)
         {
             bool bHasTexVariations = false;
-            bool bHasDrawblVariations = false;
+            bool bHasDrawblVariations = true;
+
             bool bHasLowLODs = false;
             bool bIsSuperLOD = false;
 
@@ -1042,23 +1051,25 @@ namespace AkinaRPTool
                         {
                             case 2:
                             case 7:
-                                _propMask = 11; break;
+                                _propMask = 11;
+                                break;
                             case 5:
                             case 8:
-                                _propMask = 65; break;
+                                _propMask = 65;
+                                break;
                             case 10:
-                                _propMask = 5; break;
+                                _propMask = 5;
+                                break;
                             default:
                                 break;
                         }
-
-
-                        int _numAlternatives = 0; // Siempre y cuando se llegua a implementar algo asi.
 
                         if (item.isReskin)
                         {
                             _propMask = 17;
                         }
+
+                        int _numAlternatives = 0; // Siempre y cuando se llegua a implementar algo asi.
 
                         drawblDataIndex.Add(new XElement("propMask", new XAttribute("value", _propMask)));
                         drawblDataIndex.Add(new XElement("numAlternatives", new XAttribute("value", _numAlternatives)));
@@ -1112,7 +1123,15 @@ namespace AkinaRPTool
 
                 compInfoItem.Add(new XElement("hash_2FD08CEF", "none")); //not sure what it does
                 compInfoItem.Add(new XElement("hash_FC507D28", "none")); //not sure what it does
-                compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));  //component expressionMods (?) - gives ability to do heels
+
+                string[] highHeels = new string[] { "0", "0", "0", "0", "0" };
+
+                if (cloth.drawableType == DrawableType.Shoes && cloth.componentFlags.isHighHeels)
+                {
+                    highHeels = new string[] { "0", "0", "0", "0", cloth.highHeelsNumber };
+                }
+
+                compInfoItem.Add(new XElement("hash_07AE529D", String.Join(" ", highHeels)));  //component expressionMods (?) - gives ability to do heels
                 compInfoItem.Add(new XElement("flags", new XAttribute("value", 0))); //not sure what it does
                 compInfoItem.Add(new XElement("inclusions", "0")); //not sure what it does
                 compInfoItem.Add(new XElement("exclusions", "0")); //not sure what it does
@@ -1144,7 +1163,15 @@ namespace AkinaRPTool
             {
                 XElement aPropMetaDataItem = new XElement("Item");
                 aPropMetaDataItem.Add(new XElement("audioId", "none")); // Añade un sonido al prop (No implementado) (Audio ID)
-                aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", new string[] { "0", "0", "0", "0", "0" })));
+
+                String[] expressionsMods = new string[] { "0", "0", "0", "0", "0" };
+
+                if (prop.componentFlags.isHighHeels && prop.drawableType == DrawableType.PropHead)
+                {
+                    expressionsMods = new string[] { "0", "0", "0", "0", prop.highHeelsNumber };
+                }
+
+                aPropMetaDataItem.Add(new XElement("expressionMods", String.Join(" ", expressionsMods)));
 
                 XElement texData = new XElement("texData", new XAttribute("itemType", "CPedPropTexData"));
 
@@ -1257,22 +1284,115 @@ namespace AkinaRPTool
             return xml;
             // END OF FILE || END -> CPedVariationInfo
         }
-        public static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
+
+        private static XElement Creature_Schema()
         {
-            XElement xmlFile = YMTXML_Schema(YMTfilePath, collectionName, targetSex);
+            XElement xml = new XElement("CCreatureMetaData");
+
+            XElement pedCompExpressions = new XElement("pedCompExpressions");
+            if (MainWindow.clothes.Where(c => c.drawableType == DrawableType.Shoes).Count() > 0)
+            {
+                /* lets test without first entry in components
+                 * 
+                //heels doesn't have that first entry but without it, fivem was sometimes crashing(?)
+                XElement FirstpedCompItem = new XElement("Item");
+                FirstpedCompItem.Add(new XElement("pedCompID", new XAttribute("value", String.Format("0x{0:X}", 6))));
+                FirstpedCompItem.Add(new XElement("pedCompVarIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedCompItem.Add(new XElement("pedCompExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedCompItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                FirstpedCompItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 28462));
+                FirstpedCompItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                FirstpedCompItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                pedCompExpressions.Add(FirstpedCompItem);
+
+                */
+
+                foreach (ClothData comp in MainWindow.clothes.Where(c => c.drawableType == DrawableType.Shoes))
+                {
+                    XElement pedCompItem = new XElement("Item");
+                    pedCompItem.Add(new XElement("pedCompID", new XAttribute("value", String.Format("0x{0:X}", 6))));
+                    pedCompItem.Add(new XElement("pedCompVarIndex", new XAttribute("value", String.Format("0x{0:X}", comp.posi))));
+                    pedCompItem.Add(new XElement("pedCompExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", 4))));
+                    pedCompItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                    pedCompItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 28462));
+                    pedCompItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                    pedCompItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                    pedCompExpressions.Add(pedCompItem);
+                }
+            }
+            xml.Add(pedCompExpressions);
+
+            XElement pedPropExpressions = new XElement("pedPropExpressions");
+            if (MainWindow.clothes.Where(p => p.drawableType == DrawableType.PropHead).Count() > 0)
+            {
+                //all original GTA have that one first entry, without it, fivem was sometimes crashing(?)
+                XElement FirstpedPropItem = new XElement("Item");
+                FirstpedPropItem.Add(new XElement("pedPropID", new XAttribute("value", String.Format("0x{0:X}", 0))));
+                FirstpedPropItem.Add(new XElement("pedPropVarIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedPropItem.Add(new XElement("pedPropExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", -1))));
+                FirstpedPropItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                FirstpedPropItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 13201));
+                FirstpedPropItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                FirstpedPropItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                pedPropExpressions.Add(FirstpedPropItem);
+
+                foreach (ClothData prop in MainWindow.clothes.Where(p => p.drawableType == DrawableType.PropHead))
+                {
+                    XElement pedPropItem = new XElement("Item");
+                    pedPropItem.Add(new XElement("pedPropID", new XAttribute("value", String.Format("0x{0:X}", 0))));
+                    pedPropItem.Add(new XElement("pedPropVarIndex", new XAttribute("value", String.Format("0x{0:X}", prop.posi))));
+                    pedPropItem.Add(new XElement("pedPropExpressionIndex", new XAttribute("value", String.Format("0x{0:X}", 0))));
+                    pedPropItem.Add(new XElement("tracks", new XAttribute("content", "char_array"), 33));
+                    pedPropItem.Add(new XElement("ids", new XAttribute("content", "short_array"), 13201));
+                    pedPropItem.Add(new XElement("types", new XAttribute("content", "char_array"), 2));
+                    pedPropItem.Add(new XElement("components", new XAttribute("content", "char_array"), 1));
+                    pedPropExpressions.Add(pedPropItem);
+                }
+            }
+            xml.Add(pedPropExpressions);
+
+            return xml;
+        }
+
+        private static void GenerateYMT(string outputFolder, string YMTfilePath, string collectionName, Sex targetSex)
+        {
+            XElement xmlFile = YMTXML_Schema(collectionName, targetSex);
+
             xmlFile.Save(YMTfilePath);
 
-            //create XmlDocument from XElement (codewalker.core requires XmlDocument)
-            XmlDocument xmldoc = new XmlDocument();
-            xmldoc.Load(xmlFile.CreateReader());
+            string result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlFile.ToString();
 
-            Meta meta = XmlMeta.GetMeta(xmldoc);
+            var xmlDocument = new XmlDocument();
+
+            xmlDocument.LoadXml(result);
+
+            Meta meta = XmlMeta.GetMeta(xmlDocument);
             byte[] newYmtBytes = CodeWalker.GameFiles.ResourceBuilder.Build(meta, 2);
 
-            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", xmlFile.ToString()); // Only for Debug propouse.
+            File.WriteAllText(outputFolder + @"\ClothData_Debug.xml", result); // Only for Debug propouse.
 
             File.WriteAllBytes(YMTfilePath, newYmtBytes);
         }
-       
+
+        public static void SaveCreature(string outputFolder, string creaturePath)
+        {
+            XElement CreatureFile = Creature_Schema();
+
+            CreatureFile.Save(creaturePath);
+
+            string result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + CreatureFile.ToString();
+
+            //create XmlDocument from XElement
+            var xmldoc = new XmlDocument();
+
+            xmldoc.LoadXml(result);
+
+            RbfFile rbf = XmlRbf.GetRbf(xmldoc);
+
+            File.WriteAllText(outputFolder + @"\ClothData_CreatureMeta_Debug.xml", result); // Only for Debug propouse.
+
+            File.WriteAllBytes(creaturePath, rbf.Save());
+        }
+
     }
 }

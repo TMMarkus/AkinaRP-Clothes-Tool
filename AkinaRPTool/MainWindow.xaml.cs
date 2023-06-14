@@ -14,6 +14,7 @@ using static AkinaRPTool.ClothData;
 using ProgressBar = System.Windows.Forms.ProgressBar;
 using System.Diagnostics;
 using System.Windows.Shapes;
+using System.Drawing;
 
 namespace AkinaRPTool
 {
@@ -286,6 +287,11 @@ namespace AkinaRPTool
                 updating = true;
                 editGroupBox.Visibility = Visibility.Visible;
                 clothEditWindow.Visibility = Visibility.Visible;
+                unkFlag5Check.Visibility = Visibility.Hidden;
+                isHighHeelsCheck.Visibility = Visibility.Hidden;
+                highHeelsNumberText.Visibility = Visibility.Hidden;
+                isReskinCheck.Visibility = Visibility.Hidden;
+                FPSHeader.Visibility = Visibility.Hidden;
 
                 UpdateTypeList();
 
@@ -305,14 +311,19 @@ namespace AkinaRPTool
                     unkFlag4Check.IsChecked = selectedCloth.componentFlags.unkFlag4;
 
                     isHighHeelsCheck.IsChecked = selectedCloth.componentFlags.isHighHeels;
+                    highHeelsNumberText.Text = selectedCloth.highHeelsNumber;
                     isReskinCheck.IsChecked = selectedCloth.isReskin;
                     ID.Text = selectedCloth.Posi.ToString();
 
-                    isHighHeelsCheck.Visibility = Visibility.Visible;
+                    
                     isReskinCheck.Visibility = Visibility.Visible;
                     FPSHeader.Visibility = Visibility.Visible;
-                    highHeelsNumberText.Visibility = Visibility.Visible;
-                    unkFlag5Check.Visibility = Visibility.Hidden;
+
+                    if(selectedCloth.drawableType == ClothNameResolver.DrawableType.Shoes)
+                    {
+                        isHighHeelsCheck.Visibility = Visibility.Visible;
+                        highHeelsNumberText.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
@@ -332,10 +343,6 @@ namespace AkinaRPTool
                     ID.Text = selectedCloth.Posi.ToString();
 
                     unkFlag5Check.Visibility = Visibility.Visible;
-                    isHighHeelsCheck.Visibility = Visibility.Hidden;
-                    isReskinCheck.Visibility = Visibility.Hidden;
-                    FPSHeader.Visibility = Visibility.Hidden;
-                    highHeelsNumberText.Visibility = Visibility.Hidden;
                 }
 
                 UpdateSelection();
@@ -574,7 +581,7 @@ namespace AkinaRPTool
 
         private void IsHighHeelsCheck_Checked(object sender, RoutedEventArgs e)
         {
-            if (selectedCloth != null && selectedCloth.IsComponent())
+            if (selectedCloth != null && (selectedCloth.drawableType == ClothNameResolver.DrawableType.Shoes || selectedCloth.drawableType == ClothNameResolver.DrawableType.PropHead))
             {
                 selectedCloth.componentFlags.isHighHeels = isHighHeelsCheck.IsChecked.GetValueOrDefault(false);
                 highHeelsNumberText.IsEnabled = !highHeelsNumberText.IsEnabled;
@@ -589,14 +596,15 @@ namespace AkinaRPTool
             }
         }
 
-        private void NumberValidationTextBox(object sender, KeyEventArgs e)
+        private void NumberValidationTextBox(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            // Permitir sólo números, el punto y la tecla de retroceso.
-            if ((e.Key < Key.D0 || e.Key > Key.D9) && e.Key != Key.Back && e.Key != Key.Decimal && e.Key != Key.OemPeriod)
-            {
-                e.Handled = true;
-            }
+            // Utilizar una expresión regular para permitir solo números enteros
+            Regex regex = new Regex(@"^[0-9]+(\.[0-9]{0,2})?$");
+            e.Handled = !regex.IsMatch(highHeelsNumberText.Text + e.Text);
+        }
 
+        private void TextLostFocusEnter(object sender, KeyEventArgs e)
+        {
             if (e.Key == Key.Enter)
             {
                 if (string.IsNullOrEmpty(highHeelsNumberText.Text))
@@ -617,7 +625,7 @@ namespace AkinaRPTool
 
         private void HihgHeelsNumber_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (selectedCloth == null || !selectedCloth.IsComponent())
+            if (selectedCloth == null || (selectedCloth.drawableType != ClothNameResolver.DrawableType.Shoes && selectedCloth.drawableType != ClothNameResolver.DrawableType.PropHead))
             {
                 return;
             }
@@ -627,41 +635,7 @@ namespace AkinaRPTool
 
             // Validar el formato del número ingresado.
 
-            bool notValid = false;
-
-            if (text.Length >= 1 && !Regex.IsMatch(text[0].ToString(), @"^[0-9]$"))
-            {
-                notValid = true;
-            }
-
-            if (text.Length >= 2 && !Regex.IsMatch(text[1].ToString(), @"^\.$"))
-            {
-                notValid = true;
-            }
-
-            if (text.Length >= 3 && !Regex.IsMatch(text[2].ToString(), @"^[0-9]$"))
-            {
-                notValid = true;
-            }
-
-            if (text.Length > 3)
-            {
-                notValid = true;
-            }
-
-
-            if (notValid)
-            {
-                int caretIndex = (sender as TextBox).CaretIndex;
-                (sender as TextBox).Text = text.Remove(caretIndex - 1, 1);
-                (sender as TextBox).CaretIndex = caretIndex - 1;
-                return;
-            }
-
-            if (selectedCloth != null && double.TryParse(text, out double result))
-            {
-                selectedCloth.highHeelsNumber = result;
-            }
+            selectedCloth.highHeelsNumber = text;
         }
 
 
@@ -695,18 +669,27 @@ namespace AkinaRPTool
 
             ComboBox cmb = sender as ComboBox;
 
-
-            if (cmb.SelectedIndex == 0)
+            try {
+                if (cmb.SelectedIndex == 0)
+                {
+                    clothesList.Filter = null;
+                }
+                else if (cmb.SelectedIndex == 1)
+                {
+                    clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Male;
+                }
+                else if (cmb.SelectedIndex == 2)
+                {
+                    clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Female;
+                }
+                else
+                {                    
+                    clothesList.Filter = (item) => ((ClothData)item).drawableType == (ClothNameResolver.DrawableType)Enum.ToObject(typeof(ClothNameResolver.DrawableType), cmb.SelectedIndex - 3);
+                }
+            }
+            catch(Exception ex)
             {
                 clothesList.Filter = null;
-            }
-            else if (cmb.SelectedIndex == 1)
-            {
-                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Male;
-            }
-            else if (cmb.SelectedIndex == 2)
-            {
-                clothesList.Filter = (item) => ((ClothData)item).targetSex == Sex.Female;
             }
 
             clothesList.Refresh();

@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static AkinaRPTool.ClothData;
+using static AkinaRPTool.ClothNameResolver;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace AkinaRPTool
@@ -294,12 +296,15 @@ namespace AkinaRPTool
                 _clothes.Add(nextCloth);
             }
 
-            int newID = 0;
-
-            foreach (var item in _clothes)
+            foreach (DrawableType type in Enum.GetValues(typeof(DrawableType)))
             {
-                item.Posi = newID;
-                newID++;
+                int newID = 0;
+
+                foreach (ClothData item in _clothes.Where(i => i.drawableType == type))
+                {
+                    item.Posi = newID;
+                    newID++;
+                }
             }
 
             _clothes = _clothes.OrderBy(x => x.posi).ToList();
