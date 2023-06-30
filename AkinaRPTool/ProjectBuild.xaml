@@ -9,9 +9,9 @@
     <Grid>
         <GroupBox Header="Target resource type" Margin="10" VerticalAlignment="Top" Height="100">
             <Grid>
-                <RadioButton x:Name="isAltvResourceRadio" Content="alt:V Resource" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" GroupName="resourceType" IsChecked="True"/>
-                <RadioButton x:Name="isSinglePlayerRadio" Content="Single player RPF" HorizontalAlignment="Left" Margin="5,30,0,0" VerticalAlignment="Top" GroupName="resourceType"/>
-                <RadioButton x:Name="isFivemResourceRadio" Content="FiveM Resource" HorizontalAlignment="Left" Margin="5,50,0,0" VerticalAlignment="Top" GroupName="resourceType"/>
+                <RadioButton x:Name="isAltvResourceRadio" IsEnabled="False" Content="alt:V Resource" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" GroupName="resourceType"/>
+                <RadioButton x:Name="isSinglePlayerRadio" IsEnabled="False" Content="Single player RPF" HorizontalAlignment="Left" Margin="5,30,0,0" VerticalAlignment="Top" GroupName="resourceType"/>
+                <RadioButton x:Name="isFivemResourceRadio" Content="FiveM Resource" HorizontalAlignment="Left" Margin="5,50,0,0" VerticalAlignment="Top" GroupName="resourceType" IsChecked="True"/>
             </Grid>
         </GroupBox>
         <GroupBox Header="Clothes collection name" Margin="10, 120, 10, 10" VerticalAlignment="Top" Height="50">
